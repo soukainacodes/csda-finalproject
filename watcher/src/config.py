@@ -19,7 +19,7 @@ REAL_ROUTER_BSSID = "aa:bb:cc:dd:ee:ff"
 ALGHUL_CONTROL_URL = "http://192.168.4.1"
 
 # ---- Sniffer serial link ---------------------------------------------------
-SNIFFER_SERIAL_PORT = "COM8"      # the classic ESP32 (CP2102)
+SNIFFER_SERIAL_PORT = "COM14"     # the ESP32-S3 sniffer (CH343 UART); was COM8 on the classic ESP32
 SNIFFER_BAUD        = 115200
 
 # ---- Paths (all off Google Drive, under the project) -----------------------

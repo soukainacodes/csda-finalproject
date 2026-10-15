@@ -1,12 +1,7 @@
-# Sniffer build config (classic ESP32, 4MB, CP2102 UART console).
-CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
-# Console stays on UART0 (default) -> appears over the CP2102 as COM8 on the PC.
-# Give the WiFi driver a few more RX buffers; promiscuous capture is bursty.
-CONFIG_ESP32_WIFI_STATIC_RX_BUFFER_NUM=16
-CONFIG_ESP32_WIFI_DYNAMIC_RX_BUFFER_NUM=32
-
-# This board resets during RF calibration on the radio power-up current spike
-# (a brownout on a marginal USB supply). Disable the brownout detector so
-# calibration can complete. The real fix is a better USB port/cable; a sniffer
-# is receive-only and does nothing power-critical, so this is a safe workaround.
+# Sniffer build config (target-agnostic: works on classic ESP32 or ESP32-S3).
+# Console stays on UART0 (the default), so the JSON stream appears over the
+# board's UART bridge (CP2102 or CH343) as a COM port on the PC.
+#
+# Disable the brownout detector: the RF power-up current spike can reset the
+# board on a marginal USB supply, and a sniffer is receive-only, so this is safe.
 CONFIG_ESP_BROWNOUT_DET=n
