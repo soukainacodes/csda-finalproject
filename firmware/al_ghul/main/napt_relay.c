@@ -1,0 +1,33 @@
+#include "napt_relay.h"
+#include "esp_log.h"
+
+static const char *TAG = "napt";
+
+esp_err_t napt_relay_enable(esp_netif_t *ap_netif)
+{
+    esp_err_t e = esp_netif_napt_enable(ap_netif);
+    if (e != ESP_OK) {
+        ESP_LOGE(TAG, "NAPT enable failed: %s (check CONFIG_LWIP_IPV4_NAPT)",
+                 esp_err_to_name(e));
+    } else {
+        ESP_LOGI(TAG, "NAPT enabled: SoftAP clients now relayed through the uplink");
+    }
+    return e;
+}
+
+void napt_relay_set_ap_dns_from_sta(esp_netif_t *ap_netif, esp_netif_t *sta_netif)
+{
+    esp_netif_dns_info_t dns;
+    if (esp_netif_get_dns_info(sta_netif, ESP_NETIF_DNS_MAIN, &dns) != ESP_OK) {
+        ESP_LOGW(TAG, "could not read uplink DNS");
+        return;
+    }
+    // Hand the uplink's DNS to the AP's DHCP server so clients can resolve names.
+    esp_netif_dhcps_stop(ap_netif);
+    esp_netif_set_dns_info(ap_netif, ESP_NETIF_DNS_MAIN, &dns);
+    uint8_t offer_dns = 0x02;  // DHCP offer: advertise a DNS server
+    esp_netif_dhcps_option(ap_netif, ESP_NETIF_OP_SET,
+                           ESP_NETIF_DOMAIN_NAME_SERVER, &offer_dns, sizeof(offer_dns));
+    esp_netif_dhcps_start(ap_netif);
+    ESP_LOGI(TAG, "AP DHCP now advertises uplink DNS " IPSTR, IP2STR(&dns.ip.u_addr.ip4));
+}

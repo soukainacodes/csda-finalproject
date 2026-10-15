@@ -1,0 +1,23 @@
+# ---- ESP-IDF build artifacts (regenerable, large) ----
+**/build/
+**/managed_components/
+**/sdkconfig.old
+**/dependencies.lock
+
+# ---- Python ----
+**/.venv/
+**/__pycache__/
+**/*.pyc
+**/.pytest_cache/
+
+# ---- Trained models (regenerable) ----
+watcher/models/*.joblib
+
+# ---- Raw flash dumps / captures (MAY CONTAIN SECRETS, large) ----
+experiments/*.bin
+*.bin
+
+# ---- OS / editor ----
+Thumbs.db
+.DS_Store
+*.swp

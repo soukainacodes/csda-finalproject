@@ -1,0 +1,13 @@
+round,accuracy,precision,recall,fpr,twin_detection_rate,genome
+0,1.0,1.0,1.0,0.0,1.0,"{""beacon_interval"": 100, ""tx_power"": 80, ""vendor_ie"": false, ""laa"": true, ""match_ie_set"": false, ""timing_jitter_us"": 12000}"
+1,1.0,1.0,1.0,0.0,1.0,"{""beacon_interval"": 100, ""tx_power"": 80, ""vendor_ie"": false, ""laa"": true, ""match_ie_set"": true, ""timing_jitter_us"": 12000}"
+2,1.0,1.0,1.0,0.0,1.0,"{""beacon_interval"": 100, ""tx_power"": 80, ""vendor_ie"": false, ""laa"": true, ""match_ie_set"": true, ""timing_jitter_us"": 12000}"
+3,1.0,1.0,1.0,0.0,1.0,"{""beacon_interval"": 100, ""tx_power"": 80, ""vendor_ie"": false, ""laa"": true, ""match_ie_set"": true, ""timing_jitter_us"": 12000}"
+4,1.0,1.0,1.0,0.0,1.0,"{""beacon_interval"": 100, ""tx_power"": 80, ""vendor_ie"": false, ""laa"": true, ""match_ie_set"": true, ""timing_jitter_us"": 12000}"
+5,1.0,1.0,1.0,0.0,1.0,"{""beacon_interval"": 100, ""tx_power"": 80, ""vendor_ie"": false, ""laa"": true, ""match_ie_set"": true, ""timing_jitter_us"": 12000}"
+6,1.0,1.0,1.0,0.0,1.0,"{""beacon_interval"": 100, ""tx_power"": 80, ""vendor_ie"": false, ""laa"": true, ""match_ie_set"": true, ""timing_jitter_us"": 12000}"
+7,1.0,1.0,1.0,0.0,1.0,"{""beacon_interval"": 100, ""tx_power"": 80, ""vendor_ie"": false, ""laa"": true, ""match_ie_set"": true, ""timing_jitter_us"": 12000}"
+8,1.0,1.0,1.0,0.0,1.0,"{""beacon_interval"": 100, ""tx_power"": 80, ""vendor_ie"": false, ""laa"": true, ""match_ie_set"": true, ""timing_jitter_us"": 12000}"
+9,1.0,1.0,1.0,0.0,1.0,"{""beacon_interval"": 100, ""tx_power"": 80, ""vendor_ie"": false, ""laa"": true, ""match_ie_set"": true, ""timing_jitter_us"": 12000}"
+10,1.0,1.0,1.0,0.0,1.0,"{""beacon_interval"": 100, ""tx_power"": 80, ""vendor_ie"": false, ""laa"": true, ""match_ie_set"": true, ""timing_jitter_us"": 12000}"
+11,1.0,1.0,1.0,0.0,1.0,"{""beacon_interval"": 100, ""tx_power"": 80, ""vendor_ie"": false, ""laa"": true, ""match_ie_set"": true, ""timing_jitter_us"": 12000}"

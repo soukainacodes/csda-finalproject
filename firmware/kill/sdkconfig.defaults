@@ -1,0 +1,4 @@
+# Kill image build config. Same chip/flash as AL-GHUL so the OTA image is
+# compatible. Only the app binary is pushed over OTA into the inactive slot.
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y

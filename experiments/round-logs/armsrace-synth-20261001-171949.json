@@ -1,0 +1,68 @@
+[
+  {
+    "round": 0,
+    "deployed_accuracy": "",
+    "deployed_twin_detection": "",
+    "accuracy": 1.0,
+    "retrained_twin_detection": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "fpr": 0.0,
+    "genome": "{\"beacon_interval\": 100, \"tx_power\": 80, \"vendor_ie\": false, \"laa\": true, \"match_ie_set\": false, \"timing_jitter_us\": 12000}"
+  },
+  {
+    "round": 1,
+    "deployed_accuracy": 0.5,
+    "deployed_twin_detection": 0.0,
+    "accuracy": 1.0,
+    "retrained_twin_detection": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "fpr": 0.0,
+    "genome": "{\"beacon_interval\": 100, \"tx_power\": 80, \"vendor_ie\": false, \"laa\": true, \"match_ie_set\": true, \"timing_jitter_us\": 12000}"
+  },
+  {
+    "round": 2,
+    "deployed_accuracy": 0.9875,
+    "deployed_twin_detection": 1.0,
+    "accuracy": 1.0,
+    "retrained_twin_detection": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "fpr": 0.0,
+    "genome": "{\"beacon_interval\": 100, \"tx_power\": 80, \"vendor_ie\": false, \"laa\": true, \"match_ie_set\": true, \"timing_jitter_us\": 12000}"
+  },
+  {
+    "round": 3,
+    "deployed_accuracy": 0.5,
+    "deployed_twin_detection": 1.0,
+    "accuracy": 1.0,
+    "retrained_twin_detection": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "fpr": 0.0,
+    "genome": "{\"beacon_interval\": 100, \"tx_power\": 80, \"vendor_ie\": false, \"laa\": true, \"match_ie_set\": true, \"timing_jitter_us\": 12000}"
+  },
+  {
+    "round": 4,
+    "deployed_accuracy": 0.5,
+    "deployed_twin_detection": 1.0,
+    "accuracy": 1.0,
+    "retrained_twin_detection": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "fpr": 0.0,
+    "genome": "{\"beacon_interval\": 100, \"tx_power\": 80, \"vendor_ie\": false, \"laa\": true, \"match_ie_set\": true, \"timing_jitter_us\": 12000}"
+  },
+  {
+    "round": 5,
+    "deployed_accuracy": 1.0,
+    "deployed_twin_detection": 1.0,
+    "accuracy": 1.0,
+    "retrained_twin_detection": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "fpr": 0.0,
+    "genome": "{\"beacon_interval\": 100, \"tx_power\": 80, \"vendor_ie\": false, \"laa\": true, \"match_ie_set\": true, \"timing_jitter_us\": 12000}"
+  }
+]

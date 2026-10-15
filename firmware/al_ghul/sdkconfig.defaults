@@ -1,0 +1,25 @@
+# AL-GHUL build configuration defaults (ESP32-S3, 16MB).
+# Applied on a clean build; also captured here for report reproducibility.
+
+# 16MB flash, custom two-slot OTA partition table (see partitions.csv).
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+
+# This board exposes only the native USB (USB-Serial/JTAG), so route the console
+# there, otherwise logs would go to UART0 pins we are not wired to.
+CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
+
+# Transparent relay (NAT): forward IP between the STA uplink and the SoftAP, and
+# NAPT so SoftAP clients share the uplink's address. This is the "repeater" path.
+CONFIG_LWIP_IP_FORWARD=y
+CONFIG_LWIP_IPV4_NAPT=y
+CONFIG_LWIP_L2_TO_L3_COPY=y
+
+# A little more headroom for the HTTP control server.
+CONFIG_HTTPD_MAX_REQ_HDR_LEN=1024
+
+# AP+STA draws more current at radio power-up; disable the brownout detector so a
+# marginal USB supply does not reset the board mid-calibration (same issue the
+# sniffer hit). Use a good USB port/cable for best RF regardless.
+CONFIG_ESP_BROWNOUT_DET=n
