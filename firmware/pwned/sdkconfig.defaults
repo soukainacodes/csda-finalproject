@@ -1,0 +1,8 @@
+# "Owned" payload build config. Matches AL-GHUL's flash/partition/console layout
+# so the image is OTA-compatible with the twin's two-slot table, and so its
+# console appears on the board's native USB (USB-Serial/JTAG).
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
+CONFIG_ESP_BROWNOUT_DET=n
