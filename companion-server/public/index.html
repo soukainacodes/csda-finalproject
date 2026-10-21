@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AL-GHŪL Companion</title>
+<meta name="description" content="A tap-through companion to the AL-GHŪL evil-twin vs the Watcher presentation.">
+<meta name="robots" content="noindex">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;1,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root{
+    color-scheme: light;
+    --bg:#F5F4EF; --panel:#FFFFFF; --navy:#0B0B34; --ink:#0A0A30;
+    --muted:#5d5d78; --faint:#8a8aa0; --line:#e4e2da; --line2:#d6d4cb;
+    --red:#E11D2A; --red-lt:#FF6B72; --green:#12876A; --green-lt:#12b586;
+    --gold:#B07D1E; --gold-lt:#D9A84A; --cream:#F4F3EE;
+    --display:'Montserrat', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', ui-monospace, monospace;
+    --shadow:0 10px 30px rgba(10,10,48,.10);
+    --r:16px;
+  }
+  :root:not([data-theme="light"]){ @media (prefers-color-scheme: dark){
+    color-scheme: dark;
+    --bg:#070718; --panel:#11112e; --navy:#0a0a24; --ink:#F4F3EE;
+    --muted:#a9a9c2; --faint:#7c7c9a; --line:#23234a; --line2:#2d2d58;
+    --cream:#11112e; --shadow:0 12px 34px rgba(0,0,0,.45);
+  }}
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --bg:#070718; --panel:#11112e; --navy:#0a0a24; --ink:#F4F3EE;
+    --muted:#a9a9c2; --faint:#7c7c9a; --line:#23234a; --line2:#2d2d58;
+    --cream:#11112e; --shadow:0 12px 34px rgba(0,0,0,.45);
+  }
+
+  *{box-sizing:border-box; min-width:0}
+  html,body{height:100%; max-width:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--display); -webkit-font-smoothing:antialiased;
+    display:flex; flex-direction:column; overflow:hidden;
+    overflow-wrap:break-word;
+  }
+  img,canvas,svg{max-width:100%}
+  .stage{overflow-x:hidden}
+  @media (prefers-reduced-motion: reduce){ *{animation-duration:.001ms!important; transition-duration:.001ms!important} }
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    flex:0 0 auto; display:flex; align-items:center; gap:10px;
+    padding:10px 16px; padding-top:calc(10px + env(safe-area-inset-top,0px));
+    background:var(--navy); color:var(--cream); z-index:30;
+  }
+  .brand{font-weight:800; letter-spacing:.14em; font-size:14px; display:flex; align-items:center; gap:8px}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--red);box-shadow:0 0 0 0 rgba(225,29,42,.6);animation:pulse 2.4s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(225,29,42,.55)}70%{box-shadow:0 0 0 9px rgba(225,29,42,0)}100%{box-shadow:0 0 0 0 rgba(225,29,42,0)}}
+  .brand small{font-family:var(--mono);font-weight:400;letter-spacing:.04em;color:var(--gold-lt);font-size:10px;display:block;margin-top:1px}
+  .live{margin-left:auto; display:flex; align-items:center; gap:10px; font-family:var(--mono); font-size:11px; color:#c9c9e0}
+  .pres{display:inline-flex;align-items:center;gap:5px}
+  .pres b{color:var(--cream)}
+  .followbtn{
+    border:1px solid rgba(255,255,255,.25); background:transparent; color:var(--cream);
+    font-family:var(--mono); font-size:10.5px; padding:5px 9px; border-radius:999px; cursor:pointer;
+    display:none; align-items:center; gap:5px; white-space:nowrap;
+  }
+  .followbtn.show{display:inline-flex}
+  .followbtn.active{background:var(--gold);border-color:var(--gold);color:#241700;font-weight:600}
+  .themebtn{border:1px solid rgba(255,255,255,.28);background:transparent;color:var(--cream);
+    font-size:13px;width:30px;height:30px;border-radius:999px;cursor:pointer;flex:0 0 auto;
+    display:inline-flex;align-items:center;justify-content:center;line-height:1;padding:0}
+
+  /* ---------- stage area ---------- */
+  .stage-wrap{flex:1 1 auto; position:relative; overflow:hidden}
+  .stage{
+    position:absolute; inset:0; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    padding:20px 16px 24px; opacity:0; transform:translateX(24px);
+    transition:opacity .4s ease, transform .4s ease; pointer-events:none;
+  }
+  .stage.on{opacity:1; transform:none; pointer-events:auto}
+  .stage.prev{transform:translateX(-24px)}
+  .inner{max-width:560px; width:100%; margin:0 auto; display:flex; flex-direction:column; gap:16px}
+
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:8px}
+  .eyebrow .n{color:var(--faint)}
+  h1.ttl{font-size:clamp(24px,6.5vw,32px);line-height:1.08;margin:2px 0 0;font-weight:800;text-wrap:balance;letter-spacing:-.01em;overflow-wrap:anywhere}
+  .twin-word{color:var(--red)}
+  .good-word{color:var(--green)}
+  .lead{font-size:15.5px;line-height:1.5;color:var(--muted);margin:0}
+  .lead b{color:var(--ink)}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:var(--shadow)}
+  .card.dark{background:var(--navy);border-color:#1b1b45;color:var(--cream)}
+  .card.dark .lead{color:#c3c3dc}
+  .card h3{margin:0 0 8px;font-size:13px;letter-spacing:.04em;font-weight:700}
+  .mono{font-family:var(--mono)}
+  .btn{
+    font-family:var(--display);font-weight:600;font-size:13.5px;border:none;border-radius:10px;
+    padding:11px 16px;cursor:pointer;background:var(--ink);color:var(--bg);display:inline-flex;align-items:center;gap:8px;
+    transition:transform .12s ease, filter .15s ease;
+  }
+  .btn:active{transform:translateY(1px) scale(.99)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line2)}
+  .btn.red{background:var(--red);color:#fff}
+  .btn.gold{background:var(--gold);color:#241700}
+  .btn.green{background:var(--green);color:#fff}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .hint{font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.03em}
+
+  .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .tile{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 10px;text-align:center}
+  .tile .big{font-family:var(--display);font-weight:800;font-size:26px;line-height:1;font-variant-numeric:tabular-nums}
+  .tile .lbl{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase;margin-top:6px;display:block}
+
+  /* phone + AP widgets */
+  .scene{background:var(--cream);border:1px dashed var(--line2);border-radius:var(--r);padding:18px 14px;position:relative;overflow:hidden}
+  .phone{width:94px;height:150px;border-radius:16px;border:2px solid var(--ink);margin:0 auto;position:relative;background:var(--panel);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:transform .6s cubic-bezier(.5,.1,.2,1)}
+  .phone .wifi{font-size:26px}
+  .phone .net{font-family:var(--mono);font-size:10px;color:var(--muted)}
+  .sig{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:999px;border:1px solid var(--line2)}
+
+  /* AP bars */
+  .aps{display:flex;gap:14px;justify-content:center;align-items:flex-end;margin-top:8px}
+  .ap{flex:1;max-width:150px;text-align:center}
+  .ap .tower{font-size:24px}
+  .ap .name{font-family:var(--mono);font-size:11px;margin-top:2px}
+  .bar{height:10px;border-radius:999px;background:var(--line);overflow:hidden;margin-top:8px}
+  .bar > i{display:block;height:100%;width:50%;border-radius:999px;transition:width .3s ease}
+  .ap.real .bar > i{background:var(--green)}
+  .ap.twin .bar > i{background:var(--red)}
+  input[type=range]{width:100%;accent-color:var(--red);margin-top:4px}
+
+  /* node map */
+  .map{position:relative;width:100%;height:230px}
+  .node{position:absolute;transform:translate(-50%,-50%);background:var(--panel);border:1.5px solid var(--line2);border-radius:12px;padding:8px 10px;font-family:var(--mono);font-size:10.5px;text-align:center;cursor:pointer;min-width:66px;transition:border-color .15s, box-shadow .15s, transform .15s;z-index:2}
+  .node:active{transform:translate(-50%,-50%) scale(.96)}
+  .node.sel{box-shadow:0 0 0 3px rgba(176,125,30,.3);border-color:var(--gold)}
+  .node .ic{font-size:17px;display:block;margin-bottom:2px}
+  .node.twin{border-color:var(--red);color:var(--red)}
+  .node.watch{border-color:var(--gold)}
+  .node.real{border-color:var(--green)}
+  svg.wires{position:absolute;inset:0;width:100%;height:100%;z-index:1;overflow:visible}
+  .detail{min-height:54px}
+
+  /* beacon stream */
+  .stream{height:150px;overflow:hidden;background:var(--navy);border-radius:12px;padding:8px;font-family:var(--mono);font-size:11px;position:relative}
+  .beacon{display:flex;justify-content:space-between;gap:8px;padding:3px 6px;border-radius:6px;margin-bottom:4px;animation:slidein .3s ease;color:#dcdcf0}
+  .beacon .tag{font-weight:600;padding:0 6px;border-radius:4px}
+  .beacon.real .tag{background:rgba(18,181,134,.2);color:var(--green-lt)}
+  .beacon.twin .tag{background:rgba(255,107,114,.2);color:var(--red-lt)}
+  @keyframes slidein{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+
+  canvas{width:100%;height:auto;display:block}
+
+  /* ladder */
+  .ladder{display:flex;flex-direction:column;gap:8px}
+  .step{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;border:1.5px solid var(--line);background:var(--panel);opacity:.5;transition:opacity .3s, border-color .3s, background .3s}
+  .step.lit{opacity:1}
+  .step .k{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-weight:600;font-size:13px;background:var(--line);flex:0 0 auto}
+  .step.lit.s0 .k{background:var(--faint);color:#fff}
+  .step.lit.s1{border-color:var(--gold)} .step.lit.s1 .k{background:var(--gold);color:#241700}
+  .step.lit.s2{border-color:var(--red)} .step.lit.s2 .k{background:var(--red);color:#fff}
+  .step.lit.s3{border-color:var(--ink);background:var(--navy);color:var(--cream)} .step.lit.s3 .k{background:#000;color:#fff}
+  .step .t{font-weight:600;font-size:13.5px} .step .d{font-family:var(--mono);font-size:10.5px;color:var(--faint)}
+  .step.lit.s3 .d{color:#b9b9d6}
+
+  .term{background:#05050f;border-radius:10px;padding:12px;font-family:var(--mono);font-size:12px;color:#e8e8f6;line-height:1.7;overflow-x:auto}
+  .term .cmd{color:var(--green-lt)} .term .leak{color:var(--red-lt)} .term .cmt{color:#7c7c9a}
+
+  /* cve wall */
+  .cve{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .cvecard{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:11px;cursor:pointer;transition:box-shadow .15s}
+  .cvecard:active{box-shadow:var(--shadow)}
+  .cvecard.danger{border-left-color:var(--red)}
+  .cvecard h4{margin:0;font-size:12px;font-weight:700} .cvecard .id{font-family:var(--mono);font-size:9.5px;color:var(--faint);margin-top:3px}
+  .cvecard .ex{font-size:11px;color:var(--muted);margin-top:7px;line-height:1.4;display:none}
+  .cvecard.open .ex{display:block}
+  .takeaway{background:var(--navy);color:var(--cream);border-radius:var(--r);padding:18px;text-align:center}
+  .takeaway .big{font-size:19px;font-weight:800;line-height:1.3}
+  .takeaway .big .r{color:var(--red-lt)} .takeaway .big .g{color:var(--green-lt)}
+
+  /* bottom nav */
+  .nav{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:10px 14px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));background:var(--panel);border-top:1px solid var(--line);z-index:30}
+  .navbtn{width:42px;height:42px;border-radius:12px;border:1.5px solid var(--line2);background:transparent;color:var(--ink);font-size:17px;cursor:pointer;flex:0 0 auto;display:grid;place-items:center}
+  .navbtn:disabled{opacity:.3}
+  .navmid{flex:1;text-align:center;min-width:0}
+  .navmid .st{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--faint);text-transform:uppercase}
+  .navmid .sn{font-weight:700;font-size:14px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .dots{display:flex;gap:6px;justify-content:center;margin-top:6px}
+  .dots i{width:7px;height:7px;border-radius:50%;background:var(--line2);transition:background .2s,width .2s}
+  .dots i.on{background:var(--red);width:18px;border-radius:999px}
+
+  .toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);font-family:var(--mono);font-size:12px;padding:9px 15px;border-radius:999px;opacity:0;transition:all .3s;z-index:50;pointer-events:none;max-width:90vw;text-align:center}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .seg{display:inline-flex;border:1px solid var(--line2);border-radius:999px;overflow:hidden;font-family:var(--mono);font-size:11px}
+  .seg button{border:none;background:transparent;padding:6px 12px;cursor:pointer;color:var(--muted)}
+  .seg button.on{background:var(--ink);color:var(--bg)}
+  .statusbig{text-align:center;font-weight:800;font-size:clamp(24px,7vw,34px);padding:8px 0;letter-spacing:.02em}
+  .s-alive{color:var(--red)} .s-down{color:var(--green)}
+  .tgt{display:none;align-items:center;gap:5px;font-family:var(--mono);font-size:10.5px;padding:4px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.25);color:var(--cream);white-space:nowrap}
+  .tgt.show{display:inline-flex}
+  .tgt.down{background:var(--green);border-color:var(--green);color:#042018;font-weight:600}
+  .pollopt{font-family:var(--display);font-weight:600;font-size:15px;text-align:left;padding:14px 16px;border:1.5px solid var(--line2);border-radius:13px;background:var(--panel);color:var(--ink);cursor:pointer;transition:border-color .15s,background .15s,transform .1s;width:100%}
+  .pollopt:active{transform:scale(.985)}
+  .pollopt:hover{border-color:var(--gold)}
+  .pollbar{position:relative;background:var(--panel);border:1.5px solid var(--line2);border-radius:13px;height:48px;overflow:hidden;margin-bottom:9px}
+  .pollbar>i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--gold);opacity:.14;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+  .pollbar.mine{border-color:var(--gold)}
+  .pollbar.correct{border-color:var(--green)}
+  .pollbar.correct>i{background:var(--green);opacity:.20}
+  .pollbar>span{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;height:100%;padding:0 15px;font-weight:600;font-size:14.5px;color:var(--ink);gap:8px}
+  .pollbar .pct{font-family:var(--mono);font-size:15px;flex:0 0 auto}
+  .pbtag{font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;margin-left:7px;font-weight:600;text-transform:uppercase;white-space:nowrap}
+  .pollvoted{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--green);text-align:center;margin-bottom:11px;font-weight:600}
+</style>
+</head>
+<body>
+<script>(function(){try{var t=localStorage.getItem('alghul-theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+
+<div class="topbar">
+  <div class="brand"><span class="dot"></span><div>AL-GHŪL<small>vs the Watcher</small></div></div>
+  <div class="live">
+    <span class="tgt" id="tgt">TARGET ALIVE</span>
+    <span class="pres" id="pres" hidden><span>●</span> <b id="presN">1</b> here</span>
+    <button class="followbtn" id="followBtn">following</button>
+    <button class="themebtn" id="themeBtn" aria-label="toggle light or dark mode">☾</button>
+  </div>
+</div>
+
+<div class="stage-wrap" id="stageWrap">
+
+  <!-- 0 COVER -->
+  <section class="stage" data-title="Welcome">
+    <div class="inner" style="justify-content:flex-start;align-items:center;gap:20px;padding-top:6px">
+      <div style="text-align:center;width:100%">
+        <div class="eyebrow" style="justify-content:center">T-742-CSDA · Final Project · Autumn 2026</div>
+        <h1 class="ttl" style="font-size:clamp(28px,9vw,42px);line-height:1.03;margin:8px 0 0">AL-GHŪL <span style="color:var(--muted);font-weight:600;font-size:.5em">vs</span> the <span class="good-word">Watcher</span></h1>
+        <p class="lead" style="font-style:italic;font-size:16px;margin:10px 0 0;color:var(--ink)">“Is what you see truly what it is?”</p>
+        <div style="font-family:var(--display);font-weight:700;font-size:15.5px;color:var(--ink);margin-top:12px">Soukaina Mahboub Mehboub</div>
+        <div class="hint" style="margin-top:3px">a machine-learning detector vs a shape-shifting rogue access point</div>
+      </div>
+
+      <div class="card" id="pollCard" style="max-width:440px;width:100%;text-align:left">
+        <div class="eyebrow" style="justify-content:center;margin-bottom:11px">Quick question &middot; vote now</div>
+        <p class="lead" style="font-size:15px;margin:0 0 15px;text-align:center">How many WiFi networks do you think still use the old <b class="good-word">WPA2</b>?</p>
+        <div id="pollOptions" style="display:flex;flex-direction:column;gap:9px">
+          <button class="pollopt" data-opt="0">About 25%</button>
+          <button class="pollopt" data-opt="1">About 50%</button>
+          <button class="pollopt" data-opt="2">About 75%</button>
+          <button class="pollopt" data-opt="3">About 95%</button>
+        </div>
+        <div id="pollThanks" hidden style="text-align:center;padding:10px 0 4px">
+          <div style="font-size:42px;line-height:1">🎉</div>
+          <div class="pollvoted" style="font-size:17px;margin-top:8px">Thanks for voting!</div>
+          <p class="hint" style="margin-top:7px">Watch the big screen for the results.</p>
+          <div id="pollAnswer" hidden style="margin-top:14px;padding-top:13px;border-top:1px solid var(--line)">
+            <div style="font-weight:800;font-size:18px;color:var(--red)">The answer: about 75%.</div>
+            <p class="lead" style="font-size:13px;margin:8px 0 0">About <b style="color:var(--ink)">75% of WiFi still uses WPA2</b>, the version this attack beats. Only <b style="color:var(--ink)">~3%</b> has moved to WPA3.</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="hint" style="margin:2px 0 0">you'll follow the talk from here</p>
+      <div style="width:100%;max-width:440px;height:44px;opacity:.75;margin-top:2px">
+        <svg viewBox="0 0 400 44" preserveAspectRatio="none" style="width:100%;height:100%">
+          <path d="M0,27 L150,27 Q165,27 172,12 T210,27 L400,27" fill="none" stroke="var(--green)" stroke-width="2"/>
+          <path d="M0,35 L250,35 Q270,35 278,20 T320,35 L400,35" fill="none" stroke="var(--red)" stroke-width="2"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1 TRAP -->
+  <section class="stage" data-title="The Trap">
+    <div class="inner">
+      <div class="eyebrow"><span class="n">01</span> The Trap</div>
+      <h1 class="ttl">A network you <span class="good-word">trust</span>.</h1>
+      <p class="lead">Your phone picks WiFi by its <b>name</b>. That name is not unique and not verified. Anyone can broadcast it.</p>
+      <div class="scene">
+        <div class="phone" id="trapPhone"><span class="wifi">📶</span><span class="net mono">Kaffi_FRI</span><span class="sig" id="trapSig">connecting…</span></div>
+      </div>
+      <div class="card">
+        <h3>Why does it just connect?</h3>
+        <p class="lead" id="trapExplain">On <b>WPA2</b>, an access point only proves it knows the password. It never proves <b>who it is</b>. Clone the name, know the password, and you are indistinguishable from the real one.</p>
+        <div class="row" style="margin-top:12px">
+          <span class="seg"><button data-wpa="2" class="on">WPA2</button><button data-wpa="3">WPA3 + PMF</button></span>
+          <span class="hint" id="wpaVerdict" style="align-self:center">clone accepted ✓</span>
+        </div>
+      </div>
+      <p class="hint">That one gap is the whole attack. WPA3 with Protected Management Frames is the fix, which is exactly why this is shown on WPA2.</p>
+    </div>
+  </section>
+
+  <!-- 1 TWIN -->
+  <section class="stage" data-title="The Twin">
+    <div class="inner">
+      <div class="eyebrow"><span class="n">02</span> The Twin</div>
+      <h1 class="ttl">Meet <span class="twin-word">AL-GHŪL</span>, the twin.</h1>
+      <p class="lead">A tiny ESP32 broadcasts the <b>same name and password</b>, then turns its signal up until your phone roams to it on its own. No attack, just a louder clone.</p>
+      <div class="scene">
+        <div class="aps">
+          <div class="ap real"><div class="tower">📡</div><div class="name">real AP</div><div class="bar"><i id="barReal"></i></div></div>
+          <div class="phone" id="twinPhone" style="width:58px;height:92px"><span class="wifi" style="font-size:18px">📱</span></div>
+          <div class="ap twin"><div class="tower">📡</div><div class="name" style="color:var(--red)">the twin</div><div class="bar"><i id="barTwin"></i></div></div>
+        </div>
+        <div style="margin-top:14px">
+          <div class="hint">drag the twin's transmit power</div>
+          <input type="range" id="txRange" min="20" max="100" value="45">
+          <div class="row" style="justify-content:space-between;margin-top:6px">
+            <span class="sig" id="roamState">on the real AP</span>
+            <span class="sig" id="netState" style="border-color:var(--green);color:var(--green)">internet: working</span>
+          </div>
+        </div>
+      </div>
+      <div class="card"><h3>It relays, it never blocks</h3><p class="lead">The twin passes your traffic out through its own uplink, so the internet keeps working and nothing feels wrong. <b>No deauth, no jamming.</b> It just out-signals and waits.</p></div>
+    </div>
+  </section>
+
+  <!-- 2 BUILD -->
+  <section class="stage" data-title="The Build">
+    <div class="inner">
+      <div class="eyebrow"><span class="n">03</span> The Build</div>
+      <h1 class="ttl">How the pieces talk.</h1>
+      <p class="lead">Tap any part of the system to see what it does.</p>
+      <div class="card">
+        <div class="map" id="map">
+          <svg class="wires" viewBox="0 0 300 230" preserveAspectRatio="none">
+            <path d="M55,55 L150,55" stroke="var(--line2)" stroke-width="2" fill="none"/>
+            <path d="M150,55 L245,55" stroke="var(--line2)" stroke-width="2" fill="none"/>
+            <path d="M150,70 L150,150" stroke="var(--gold)" stroke-width="2" stroke-dasharray="4 4" fill="none"/>
+            <path d="M55,70 Q55,190 140,190" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="3 5" fill="none" opacity=".7"/>
+          </svg>
+          <div class="node real" style="left:18%;top:24%" data-d="Your phone or tablet. It thinks it joined the real network. It never knows the difference.">📱<span>victim</span></div>
+          <div class="node twin" style="left:50%;top:24%" data-d="AL-GHŪL. The evil twin AP and a transparent relay. Everything flows through it.">😈<span>twin</span></div>
+          <div class="node" style="left:82%;top:24%" data-d="The real internet, reached through the twin's own uplink. This is why browsing still works.">🌐<span>uplink</span></div>
+          <div class="node watch" style="left:50%;top:66%" data-d="The sniffer: a second ESP32 in listen-only mode, copying every beacon off the air.">👂<span>sniffer</span></div>
+          <div class="node watch" style="left:50%;top:90%;top:88%" data-d="The Watcher: the ML detector on the laptop. It reads the beacons and decides real or twin.">🧠<span>Watcher</span></div>
+        </div>
+        <div class="detail card" style="margin-top:12px;box-shadow:none" id="mapDetail"><p class="lead">The victim's traffic goes victim → twin → uplink. Meanwhile every beacon on the air radiates to the sniffer, which feeds the Watcher.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 PROOF -->
+  <section class="stage" data-title="The Proof">
+    <div class="inner">
+      <div class="eyebrow"><span class="n">04</span> The Proof</div>
+      <h1 class="ttl">The <span class="good-word">Watcher</span> sees through it.</h1>
+      <p class="lead">It never looks at the name. It reads the <b>radio fingerprint</b>: beacon timing, signal jitter, which info-elements are present. An AI telling one radio from another.</p>
+      <div class="tiles">
+        <div class="tile"><div class="big" style="color:var(--green)">100%</div><span class="lbl">accuracy</span></div>
+        <div class="tile"><div class="big" style="color:var(--green)">0.00</div><span class="lbl">false alarms</span></div>
+        <div class="tile"><div class="big" id="beaconCount">0</div><span class="lbl">beacons read</span></div>
+      </div>
+      <div class="card"><h3>Live capture</h3><div class="stream" id="stream"></div></div>
+      <div class="card">
+        <h3>The arms race</h3>
+        <p class="lead" style="font-size:13.5px">The attacker evolves a disguise to slip past. The deployed detector <span style="color:var(--red)">dips</span>. The Watcher retrains and <span style="color:var(--green)">recovers</span>.</p>
+        <canvas id="raceCanvas" width="520" height="240"></canvas>
+        <div class="row" style="margin-top:10px">
+          <button class="btn red" id="evolveBtn">attacker evolves</button>
+          <button class="btn green" id="retrainBtn">Watcher retrains</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 FINISHER -->
+  <section class="stage" data-title="The Finisher">
+    <div class="inner">
+      <div class="eyebrow"><span class="n">05</span> The Finisher</div>
+      <h1 class="ttl">Once it's sure, it <span class="twin-word">strikes back</span>.</h1>
+      <p class="lead">The chip ships with its defences <b>off by default</b>. That same weakness lets the Watcher do more than switch it off. Tap through the ladder.</p>
+      <div class="ladder" id="ladder">
+        <div class="step s0" data-i="0"><div class="k">1</div><div><div class="t">reach it</div><div class="d">prove we can talk to the twin</div></div></div>
+        <div class="step s1" data-i="1"><div class="k">2</div><div><div class="t">command it</div><div class="d">change its disguise, live</div></div></div>
+        <div class="step s2" data-i="2"><div class="k">3</div><div><div class="t">take it over</div><div class="d">reflash it over the air (OTA)</div></div></div>
+        <div class="step s3" data-i="3"><div class="k">4</div><div><div class="t">end it</div><div class="d">it wipes itself and goes dark</div></div></div>
+      </div>
+      <div class="row"><button class="btn" id="ladderNext">advance the attack ▸</button><button class="btn ghost" id="dumpBtn">dump its flash</button></div>
+      <div class="card dark" id="dumpCard" hidden>
+        <h3 style="color:var(--red-lt)">$ esptool read_flash → strings</h3>
+        <div class="term">
+          <span class="cmd">$ esptool read_flash 0x0 0x400000 dump.bin</span><br>
+          <span class="cmd">$ strings dump.bin | grep -i secret</span><br>
+          &nbsp;&nbsp;WiFi password … <span class="leak" id="leak1">••••••••</span> <span class="cmt"># plaintext</span><br>
+          &nbsp;&nbsp;kill token …… <span class="leak" id="leak2">••••••••••</span> <span class="cmt"># plaintext</span>
+        </div>
+        <p class="lead" style="margin-top:10px">Flash encryption is off, so the secrets sit in the open. "Authenticated" is only as strong as the chip's secret storage, and by default that is an open book.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 VERDICT -->
+  <section class="stage" data-title="The Verdict">
+    <div class="inner">
+      <div class="eyebrow"><span class="n">06</span> The Verdict</div>
+      <h1 class="ttl">This isn't hypothetical.</h1>
+      <p class="lead">The same chip has really been read, crashed, and owned in the wild. Tap a case.</p>
+      <div class="cve" id="cve">
+        <div class="cvecard danger"><h4>Remote takeover, no pairing</h4><div class="id">BrakTooth · CVE-2021-28139</div><div class="ex">Code execution on the ESP32 from radio range, with no credentials at all. 2021.</div></div>
+        <div class="cvecard"><h4>One frame crashes it</h4><div class="id">CVE-2019-12588</div><div class="ex">A crafted WiFi frame crashes the ESP stack, the same radio this twin uses.</div></div>
+        <div class="cvecard"><h4>Radio-range DoS</h4><div class="id">SweynTooth · CVE-2020-13594</div><div class="ex">Invalid packets crash or deadlock the ESP32 Bluetooth stack from across the room.</div></div>
+        <div class="cvecard"><h4>Secrets glitched out</h4><div class="id">CVE-2019-17391</div><div class="ex">Fault injection recovers the flash-encryption keys. Even "protected" flash fell on old silicon.</div></div>
+        <div class="cvecard danger"><h4>Hardcoded creds at scale</h4><div class="id">Mirai · 2016</div><div class="ex">Default passwords in ~150,000 devices took down half the internet at 1.2 Tbps.</div></div>
+        <div class="cvecard"><h4>The lesson</h4><div class="id">the point of it all</div><div class="ex">These chips cannot defend themselves. The environment around them has to.</div></div>
+      </div>
+      <div class="takeaway">
+        <div class="big">Small chips must live in<br><span class="r">protected environments</span>,<br>with their defences <span class="g">turned on</span>.</div>
+      </div>
+      <p class="hint" style="text-align:center">Detect with the Watcher · harden clients with WPA3/PMF · encrypt the flash · never hardcode a secret.</p>
+    </div>
+  </section>
+
+  <!-- 6 NEUTRALIZED -->
+  <section class="stage" data-title="Neutralized">
+    <div class="inner">
+      <div class="eyebrow"><span class="n">07</span> The Kill</div>
+      <h1 class="ttl">The Watcher hunts <span class="good-word">alone</span>.</h1>
+      <p class="lead">No human pulled the trigger. The moment it was sure, the Watcher took the twin over and killed it by itself, and timed every step.</p>
+      <div class="statusbig" id="statusBig">
+        <span class="s-alive" id="sAlive">AL-GHŪL: ALIVE</span>
+        <span class="s-down" id="sDown" hidden>TARGET DOWN</span>
+      </div>
+      <div class="tiles">
+        <div class="tile"><div class="big" id="latDetect">–</div><span class="lbl">detect (s)</span></div>
+        <div class="tile"><div class="big" id="latNeut">–</div><span class="lbl">neutralize (s)</span></div>
+        <div class="tile"><div class="big" id="latTotal">–</div><span class="lbl">appear → dead (s)</span></div>
+      </div>
+      <div class="card"><h3>What just happened</h3>
+        <p class="lead" style="font-size:14px">The Watcher spotted the twin by its radio fingerprint, reflashed it into <span class="mono">NEUTRALIZED_BY_THE_WATCHER</span> over the air, then made it wipe itself. The sniffer watched its beacon rename to <span class="mono">AL-GHUL_DOWN</span> and vanish.</p>
+      </div>
+      <p class="hint" style="text-align:center">An AI that finds a rogue AP and ends it on its own is the point: devices like this must live in protected environments.</p>
+    </div>
+  </section>
+
+</div>
+
+<div class="nav">
+  <button class="navbtn" id="prevBtn" aria-label="previous">‹</button>
+  <div class="navmid">
+    <div class="st" id="navStage">Stage 1 / 6</div>
+    <div class="sn" id="navName">The Trap</div>
+    <div class="dots" id="dots"></div>
+  </div>
+  <button class="navbtn" id="nextBtn" aria-label="next">›</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+  var stages = Array.prototype.slice.call(document.querySelectorAll('.stage'));
+  var N = stages.length, cur = 0;
+  var navStage = document.getElementById('navStage'),
+      navName  = document.getElementById('navName'),
+      dotsWrap = document.getElementById('dots'),
+      prevBtn  = document.getElementById('prevBtn'),
+      nextBtn  = document.getElementById('nextBtn'),
+      toastEl  = document.getElementById('toast');
+
+  // presenter mode if the link ends in #present
+  var isPresenter = (location.hash || '').toLowerCase().indexOf('present') !== -1;
+
+  // build dots
+  for(var i=0;i<N;i++){ var d=document.createElement('i'); dotsWrap.appendChild(d); }
+  var dots = Array.prototype.slice.call(dotsWrap.children);
+
+  var toastT;
+  function toast(msg){ toastEl.textContent=msg; toastEl.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(function(){toastEl.classList.remove('show');},2200); }
+
+  var following = true;        // audience auto-follows presenter by default
+  var presenterStage = null;   // last stage the presenter broadcast
+
+  function show(n, fromSync){
+    n = Math.max(0, Math.min(N-1, n));
+    stages.forEach(function(s,idx){
+      s.classList.toggle('on', idx===n);
+      s.classList.toggle('prev', idx<n);
+    });
+    cur = n;
+    navStage.textContent = 'Stage '+(n+1)+' / '+N;
+    navName.textContent = stages[n].getAttribute('data-title');
+    dots.forEach(function(d,idx){ d.classList.toggle('on', idx===n); });
+    prevBtn.disabled = n===0; nextBtn.disabled = n===N-1;
+    stages[n].scrollTop = 0;
+    onEnter(n);
+    // presenter broadcasts; audience that moves itself stops following
+    if(isPresenter && !fromSync) broadcast(n);
+    if(!isPresenter && !fromSync && presenterStage!==null && n!==presenterStage) setFollowing(false);
+  }
+  function go(delta){ show(cur+delta); }
+
+  // Only the presenter (companion opened with the key) can self-navigate. The
+  // audience never drives: they only follow the presenter's slides.
+  prevBtn.onclick=function(){ if(isPresenter) go(-1); };
+  nextBtn.onclick=function(){ if(isPresenter) go(1); };
+  document.addEventListener('keydown',function(e){
+    if(!isPresenter) return;
+    if(e.key==='ArrowRight') go(1);
+    else if(e.key==='ArrowLeft') go(-1);
+  });
+  // swipe (presenter only)
+  var tx=0,ty=0;
+  document.getElementById('stageWrap').addEventListener('touchstart',function(e){tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
+  document.getElementById('stageWrap').addEventListener('touchend',function(e){
+    if(!isPresenter) return;
+    var dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+    if(Math.abs(dx)>60 && Math.abs(dx)>Math.abs(dy)*1.6){ go(dx<0?1:-1); }
+  },{passive:true});
+
+  // ---------- per-stage interactions (wired once) ----------
+  var entered = {};
+  function onEnter(n){
+    if(n===4){ startStream(); drawRace(); }   // The Proof stage (after the cover shift)
+  }
+
+  // Stage 0: WPA toggle
+  (function(){
+    var segBtns = document.querySelectorAll('.seg button[data-wpa]');
+    var verdict = document.getElementById('wpaVerdict');
+    var explain = document.getElementById('trapExplain');
+    var sig = document.getElementById('trapSig'), phone=document.getElementById('trapPhone');
+    setTimeout(function(){ sig.textContent='connected ✓'; sig.style.borderColor='var(--green)'; sig.style.color='var(--green)'; },900);
+    segBtns.forEach(function(b){ b.onclick=function(){
+      segBtns.forEach(function(x){x.classList.remove('on');}); b.classList.add('on');
+      if(b.getAttribute('data-wpa')==='2'){
+        verdict.textContent='clone accepted ✓'; verdict.style.color='var(--red)';
+        explain.innerHTML='On <b>WPA2</b>, an access point only proves it knows the password. It never proves <b>who it is</b>. Clone the name, know the password, and you are indistinguishable from the real one.';
+        phone.style.transform='none';
+      } else {
+        verdict.textContent='clone refused ✕'; verdict.style.color='var(--green)';
+        explain.innerHTML='With <b>WPA3 + Protected Management Frames</b>, the device can tell the management frames are forged and <b>refuses the clone</b>. The trap closes.';
+        phone.style.transform='translateX(6px)';
+      }
+    };});
+  })();
+
+  // Stage 1: TX power slider
+  (function(){
+    var r=document.getElementById('txRange'), bR=document.getElementById('barReal'), bT=document.getElementById('barTwin'),
+        phone=document.getElementById('twinPhone'), roam=document.getElementById('roamState'), net=document.getElementById('netState');
+    var realPwr=62;
+    function upd(){
+      var tw=+r.value;
+      bR.style.width=realPwr+'%'; bT.style.width=tw+'%';
+      if(tw>realPwr){ phone.style.transform='translateX(46px)'; roam.textContent='roamed to the twin ↦'; roam.style.borderColor='var(--red)'; roam.style.color='var(--red)'; }
+      else { phone.style.transform='none'; roam.textContent='on the real AP'; roam.style.borderColor='var(--line2)'; roam.style.color=''; }
+    }
+    r.addEventListener('input',upd); upd();
+  })();
+
+  // Stage 2: node map
+  (function(){
+    var nodes=document.querySelectorAll('#map .node'), det=document.getElementById('mapDetail');
+    nodes.forEach(function(nd){ nd.onclick=function(){
+      nodes.forEach(function(x){x.classList.remove('sel');}); nd.classList.add('sel');
+      det.innerHTML='<p class="lead">'+nd.getAttribute('data-d')+'</p>';
+    };});
+  })();
+
+  // Stage 3: beacon stream + arms race
+  var streamTimer=null, bc=0, bcEl=document.getElementById('beaconCount'), streamEl=document.getElementById('stream');
+  function startStream(){
+    if(streamTimer) return;
+    streamTimer=setInterval(function(){
+      var twin=Math.random()<0.45;
+      var row=document.createElement('div');
+      row.className='beacon '+(twin?'twin':'real');
+      var rssi=(twin?-58:-71)+Math.floor(Math.random()*6-3);
+      row.innerHTML='<span>bcn · int '+(twin?102:100)+' · '+rssi+'dBm</span><span class="tag">'+(twin?'TWIN':'REAL')+'</span>';
+      streamEl.insertBefore(row, streamEl.firstChild);
+      while(streamEl.children.length>7) streamEl.removeChild(streamEl.lastChild);
+      bc++; bcEl.textContent=bc;
+    },700);
+  }
+  // arms-race curve
+  var race={deployed:[1,1,.5,1,1,.5,.5,1], retr:[1,1,1,1,1,1,1,1], shown:2};
+  var cvs=document.getElementById('raceCanvas');
+  function drawRace(){
+    var ctx=cvs.getContext('2d'), W=cvs.width,H=cvs.height, pad=34;
+    ctx.clearRect(0,0,W,H);
+    var cs=getComputedStyle(document.documentElement);
+    var line=cs.getPropertyValue('--line2'), red=cs.getPropertyValue('--red'), gold=cs.getPropertyValue('--gold'), faint=cs.getPropertyValue('--faint');
+    function X(i){return pad + i*(W-pad*1.4)/(race.deployed.length-1);}
+    function Y(v){return H-pad - v*(H-pad*1.8);}
+    // axes
+    ctx.strokeStyle=line; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(pad,Y(1)-6); ctx.lineTo(pad,H-pad); ctx.lineTo(W-6,H-pad); ctx.stroke();
+    ctx.fillStyle=faint; ctx.font='11px "IBM Plex Mono",monospace';
+    ctx.fillText('100%',4,Y(1)+4); ctx.fillText('50%',8,Y(.5)+4); ctx.fillText('round →',W-72,H-10);
+    function plot(arr,color,dash){
+      ctx.strokeStyle=color; ctx.lineWidth=2.4; ctx.setLineDash(dash||[]); ctx.beginPath();
+      for(var i=0;i<race.shown;i++){ var x=X(i),y=Y(arr[i]); i?ctx.lineTo(x,y):ctx.moveTo(x,y); } ctx.stroke(); ctx.setLineDash([]);
+    }
+    plot(race.retr, gold, [6,5]);
+    plot(race.deployed, red);
+    // points on deployed
+    for(var i=0;i<race.shown;i++){ ctx.fillStyle=red; ctx.beginPath(); ctx.arc(X(i),Y(race.deployed[i]),3.5,0,7); ctx.fill(); }
+    // labels
+    ctx.fillStyle=gold; ctx.fillText('after retrain', X(0)+6, Y(1)-8);
+    ctx.fillStyle=red; ctx.fillText('deployed', X(0)+6, Y(.5)+16);
+  }
+  document.getElementById('evolveBtn').onclick=function(){ if(race.shown<race.deployed.length){ race.shown++; drawRace(); if(race.deployed[race.shown-1]<1) toast('the disguise slipped past the deployed detector'); } else toast('attacker is out of new tricks'); };
+  document.getElementById('retrainBtn').onclick=function(){ race.deployed=race.deployed.map(function(){return 1;}); drawRace(); toast('Watcher retrained — back to 100%'); };
+
+  // Stage 4: ladder + flash dump
+  (function(){
+    var steps=document.querySelectorAll('#ladder .step'), lit=0, next=document.getElementById('ladderNext');
+    var labels=['we can reach the twin','it obeyed a live command','firmware we chose is running on it — owned','it erased its flash and went dark'];
+    function light(){ steps.forEach(function(s,idx){ s.classList.toggle('lit', idx<lit); }); }
+    next.onclick=function(){ if(lit<steps.length){ lit++; light(); toast(labels[lit-1]); if(lit===steps.length){ next.disabled=true; next.textContent='it is gone.'; } } };
+    var dumpBtn=document.getElementById('dumpBtn'), dumpCard=document.getElementById('dumpCard');
+    dumpBtn.onclick=function(){
+      dumpCard.hidden=false;
+      var l1=document.getElementById('leak1'), l2=document.getElementById('leak2');
+      setTimeout(function(){ l1.textContent='(the WiFi password)'; },500);
+      setTimeout(function(){ l2.textContent='(the kill token)'; },1000);
+      dumpBtn.disabled=true;
+      dumpCard.scrollIntoView({behavior:'smooth',block:'nearest'});
+    };
+  })();
+
+  // Stage 5: cve cards
+  document.querySelectorAll('#cve .cvecard').forEach(function(c){ c.onclick=function(){ c.classList.toggle('open'); }; });
+
+  // ---------- live wand (room + db), graceful if absent ----------
+  function setFollowing(on){
+    following=on;
+    var b=document.getElementById('followBtn'); b.classList.add('show');
+    b.classList.toggle('active',on);
+    b.textContent = on ? 'following ✓' : 'catch up';
+    if(on && presenterStage!==null && presenterStage!==cur) show(presenterStage,true);
+  }
+  document.getElementById('followBtn').onclick=function(){ setFollowing(!following); };
+
+  var emitStage=function(){};
+  function broadcast(n){ emitStage(n); }
+
+  // ---------- live wand over WebSocket (every phone, no sign-in needed) ----------
+  var q=new URLSearchParams(location.search);
+  var presentKey=q.get('present');
+  isPresenter = !!presentKey || (location.hash||'').toLowerCase().indexOf('present') !== -1;
+  var ws=null, reconnectT=null;
+  function wsSend(o){ try{ if(ws && ws.readyState===1) ws.send(JSON.stringify(o)); }catch(e){} }
+  function showFollow(){ document.getElementById('followBtn').classList.add('show'); }
+  function connect(){
+    var proto = location.protocol==='https:' ? 'wss' : 'ws';
+    var url = proto+'://'+location.host+'/ws'+(presentKey?('?key='+encodeURIComponent(presentKey)):'');
+    try{ ws=new WebSocket(url); }catch(e){ return; }
+    ws.onopen=function(){ showFollow(); if(isPresenter){ wsSend({t:'set',i:cur}); toast('presenter mode — your moves drive every phone'); } };
+    ws.onmessage=function(ev){
+      var m; try{ m=JSON.parse(ev.data); }catch(e){ return; }
+      if(m.t==='stage' && typeof m.i==='number'){
+        presenterStage=m.i; showFollow();
+        // strict follow: every presenter move snaps the audience there, forward or
+        // back, and re-engages following even if they had tapped away to explore.
+        if(!isPresenter){ setFollowing(true); if(m.i!==cur) show(m.i,true); }
+      } else if(m.t==='count' && typeof m.n==='number'){
+        var pres=document.getElementById('pres'); pres.hidden=false; document.getElementById('presN').textContent=m.n;
+      } else if(m.t==='status'){
+        var down = m.down !== false;
+        var tgt=document.getElementById('tgt'); tgt.classList.add('show');
+        var a=document.getElementById('sAlive'), dn=document.getElementById('sDown');
+        if(a) a.hidden=down; if(dn) dn.hidden=!down;
+        if(down){ tgt.classList.add('down'); tgt.textContent='TARGET DOWN'; }
+        else { tgt.classList.remove('down'); tgt.textContent='TARGET ALIVE'; }
+        var f=function(id,v){ var el=document.getElementById(id); if(el && v!=null && !isNaN(v)) el.textContent=Number(v).toFixed(2); };
+        f('latDetect',m.detect); f('latNeut',m.neutralize); f('latTotal',m.total);
+        if(down) toast('the Watcher neutralized the twin');
+      } else if(m.t==='poll'){
+        if(window.__renderPoll) window.__renderPoll(m);
+      }
+    };
+    ws.onclose=function(){ ws=null; clearTimeout(reconnectT); reconnectT=setTimeout(connect,2000); };
+    ws.onerror=function(){ try{ ws.close(); }catch(e){} };
+  }
+  emitStage=function(n){ wsSend({t:'set',i:n}); };
+  connect();
+
+  // ---- survey poll: the audience just votes once and gets a thank-you. The
+  // live tally and the reveal live on the big screen (the deck), not the phones.
+  (function poll(){
+    var opts=document.getElementById('pollOptions'),
+        thanks=document.getElementById('pollThanks'),
+        answer=document.getElementById('pollAnswer');
+    var curEpoch=null;                       // the current poll session (bumps on reset)
+    function stored(){ try{ return JSON.parse(localStorage.getItem('alghul-vote')||'null'); }catch(e){ return null; } }
+    function votedThisRound(){ var s=stored(); return !!(s && curEpoch!==null && s.e===curEpoch); }
+    function showThanks(){ opts.hidden=true; thanks.hidden=false; }
+    function showVote(){ opts.hidden=false; thanks.hidden=true; if(answer) answer.hidden=true; }
+    function vote(n){
+      if(curEpoch===null || votedThisRound()) return;   // one vote per phone per session
+      try{ localStorage.setItem('alghul-vote', JSON.stringify({e:curEpoch, o:n})); }catch(e){}
+      fetch('/vote?option='+n+'&epoch='+curEpoch,{method:'POST'}).catch(function(){});
+      showThanks();
+    }
+    [].forEach.call(opts.querySelectorAll('.pollopt'), function(b){
+      b.onclick=function(){ vote(parseInt(b.dataset.opt,10)); };
+    });
+    window.__renderPoll=function(m){
+      if(typeof m.epoch!=='undefined'){
+        if(curEpoch!==null && m.epoch!==curEpoch){   // poll was reset -> let this phone vote again
+          try{ localStorage.removeItem('alghul-vote'); }catch(e){}
+        }
+        curEpoch=m.epoch;
+      }
+      if(m.revealed){ showThanks(); if(answer) answer.hidden=false; }
+      else if(votedThisRound()){ showThanks(); }
+      else { showVote(); }
+    };
+  })();
+
+  // theme toggle (default light = matches the deck; choice persists per phone)
+  (function themeToggle(){
+    var root=document.documentElement, b=document.getElementById('themeBtn');
+    function icon(){ b.textContent = root.getAttribute('data-theme')==='dark' ? '☀' : '☾'; }
+    icon();
+    b.onclick=function(){
+      var t = root.getAttribute('data-theme')==='dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', t);
+      try{ localStorage.setItem('alghul-theme', t); }catch(e){}
+      icon();
+    };
+  })();
+
+  // boot
+  show(0);
+  if(isPresenter){
+    document.querySelector('.brand small').textContent='presenter';
+  } else {
+    // audience: no self-navigation controls, they only follow the presenter
+    ['prevBtn','nextBtn','followBtn'].forEach(function(id){
+      var el=document.getElementById(id); if(el) el.style.display='none';
+    });
+  }
+})();
+</script>
+</body>
+</html>
