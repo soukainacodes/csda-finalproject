@@ -1,0 +1,13 @@
+{
+  "mode": "serial",
+  "armed": true,
+  "target_bssid": "02:a1:00:00:00:01",
+  "t_twin_online": 0.0,
+  "t_detected": 27.031,
+  "t_neutralized": 27.938,
+  "detect_latency": 27.031,
+  "neutralize_latency": 0.907,
+  "total_latency": 27.938,
+  "detector_accuracy": 1.0,
+  "detector_fpr": 0.0
+}

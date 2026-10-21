@@ -1,0 +1,2 @@
+{"t": 5.094, "event": "monitor", "detector_acc": 1.0, "fpr": 0.0}
+{"t": 62.625, "event": "suspect", "bssid": "02:a1:00:00:00:01", "twin_score": 1.0, "frames": 7, "streak": 1}

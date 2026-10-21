@@ -1,0 +1,7 @@
+{"t": 11.703, "event": "monitor", "detector_acc": 1.0, "fpr": 0.0}
+{"t": 19.922, "event": "suspect", "bssid": "02:a1:00:00:00:01", "twin_score": 1.0, "frames": 15, "streak": 1}
+{"t": 28.891, "event": "suspect", "bssid": "02:a1:00:00:00:01", "twin_score": 1.0, "frames": 12, "streak": 2}
+{"t": 28.906, "event": "DETECTED", "bssid": "02:a1:00:00:00:01", "confidence": 1.0}
+{"t": 28.906, "event": "KILL", "action": "death rattle + self-wipe", "via": "serial", "armed": true}
+{"t": 29.812, "event": "KILL", "reply": "KILL_OK death rattle + self-wipe\r\nI (48265) wifi:Total power"}
+{"t": 29.828, "event": "neutralized", "target": "02:a1:00:00:00:01"}

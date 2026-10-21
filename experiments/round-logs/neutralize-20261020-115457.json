@@ -1,0 +1,13 @@
+{
+  "mode": "synth",
+  "armed": false,
+  "target_bssid": "02:a1:00:00:00:01",
+  "t_twin_online": 1.0,
+  "t_detected": 1.39,
+  "t_neutralized": 1.468,
+  "detect_latency": 0.39,
+  "neutralize_latency": 0.078,
+  "total_latency": 0.468,
+  "detector_accuracy": 1.0,
+  "detector_fpr": 0.0
+}

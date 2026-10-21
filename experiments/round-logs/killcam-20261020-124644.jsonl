@@ -1,0 +1,6 @@
+{"t": 4.375, "event": "monitor", "detector_acc": 1.0, "fpr": 0.0}
+{"t": 8.437, "event": "suspect", "bssid": "02:a1:00:00:00:01", "twin_score": 1.0, "frames": 9, "streak": 1}
+{"t": 13.078, "event": "suspect", "bssid": "02:a1:00:00:00:01", "twin_score": 1.0, "frames": 13, "streak": 2}
+{"t": 13.094, "event": "DETECTED", "bssid": "02:a1:00:00:00:01", "confidence": 1.0}
+{"t": 13.172, "event": "KILL", "action": "/kill self-wipe", "armed": false}
+{"t": 13.172, "event": "neutralized", "target": "02:a1:00:00:00:01"}

@@ -1,0 +1,5 @@
+round,deployed_accuracy,deployed_twin_detection,accuracy,retrained_twin_detection,precision,recall,fpr,genome
+0,,,1.0,1.0,1.0,1.0,0.0,"{""beacon_interval"": 100, ""tx_power"": 80, ""vendor_ie"": false, ""laa"": true, ""match_ie_set"": false, ""timing_jitter_us"": 12000}"
+1,0.5,0.0,1.0,1.0,1.0,1.0,0.0,"{""beacon_interval"": 100, ""tx_power"": 80, ""vendor_ie"": false, ""laa"": true, ""match_ie_set"": true, ""timing_jitter_us"": 12000}"
+2,0.9967,1.0,1.0,1.0,1.0,1.0,0.0,"{""beacon_interval"": 100, ""tx_power"": 80, ""vendor_ie"": false, ""laa"": true, ""match_ie_set"": true, ""timing_jitter_us"": 12000}"
+3,1.0,1.0,1.0,1.0,1.0,1.0,0.0,"{""beacon_interval"": 100, ""tx_power"": 80, ""vendor_ie"": false, ""laa"": true, ""match_ie_set"": true, ""timing_jitter_us"": 12000}"
