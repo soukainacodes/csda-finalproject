@@ -1,6 +1,8 @@
 #include "serial_control.h"
 #include "disguise.h"
 #include "wifi_twin.h"
+#include "control_server.h"
+#include "app_config.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -31,6 +33,15 @@ static void handle_line(char *line)
         free(j);
     } else if (strncmp(line, "PING", 4) == 0) {
         printf("PONG\n");
+    } else if (strncmp(line, "KILL ", 5) == 0) {
+        // Authenticated kill over USB, so the finisher does not depend on the
+        // WiFi control plane. "KILL <token>".
+        if (strcmp(line + 5, ALGHUL_CONTROL_TOKEN) == 0) {
+            printf("KILL_OK death rattle + self-wipe\n");
+            control_server_kill();
+        } else {
+            printf("KILL_ERR bad_token\n");
+        }
     }
 }
 

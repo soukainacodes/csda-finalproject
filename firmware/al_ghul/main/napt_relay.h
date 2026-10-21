@@ -10,3 +10,7 @@
 
 esp_err_t napt_relay_enable(esp_netif_t *ap_netif);
 void      napt_relay_set_ap_dns_from_sta(esp_netif_t *ap_netif, esp_netif_t *sta_netif);
+
+// DANGER DEMO ONLY: advertise the twin itself as the DNS server and log every
+// domain the victim looks up (see dns_spy.h). Lab-only, educational.
+void      napt_relay_enable_dns_spy(esp_netif_t *ap_netif, esp_netif_t *sta_netif);

@@ -7,3 +7,7 @@
 #include "esp_err.h"
 
 esp_err_t control_server_start(void);
+
+// Trigger the death sequence + self-wipe from elsewhere (e.g. the USB serial
+// control path), so the kill does not depend on the WiFi control plane.
+void control_server_kill(void);

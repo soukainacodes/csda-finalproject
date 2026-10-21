@@ -6,6 +6,8 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 #include "esp_log.h"
 #include "esp_system.h"
 #include "esp_wifi.h"
@@ -18,6 +20,8 @@
 #include "cJSON.h"
 
 static const char *TAG = "control";
+extern uint32_t g_tombstone;     // defined in al_ghul.c; the reboot-persistent kill marker
+#define TOMBSTONE_MAGIC 0xDEAD5AFEu
 static httpd_handle_t s_httpd;
 static esp_timer_handle_t s_apply_timer;
 
@@ -35,20 +39,60 @@ static void apply_cb(void *arg)
 // physical USB re-flash revives it.
 static esp_timer_handle_t s_kill_timer;
 
-static void do_self_wipe(void *arg)
+// Erase everything we safely can: NVS (config/secrets/victim diary), the OTA
+// boot selector, and the OTHER app slot. We do NOT erase the slot we are running
+// from: erasing the flash you execute from aborts the CPU and the board reboots
+// back into the intact twin (which is exactly the bug this replaces).
+static void wipe_config(void)
 {
     const esp_partition_t *p;
     p = esp_partition_find_first(ESP_PARTITION_TYPE_DATA, ESP_PARTITION_SUBTYPE_DATA_NVS, NULL);
     if (p) esp_partition_erase_range(p, 0, p->size);
     p = esp_partition_find_first(ESP_PARTITION_TYPE_DATA, ESP_PARTITION_SUBTYPE_DATA_OTA, NULL);
     if (p) esp_partition_erase_range(p, 0, p->size);
-
     const esp_partition_t *running = esp_ota_get_running_partition();
     const esp_partition_t *other = esp_ota_get_next_update_partition(NULL);
     if (other && other != running) esp_partition_erase_range(other, 0, other->size);
-    if (running) esp_partition_erase_range(running, 0, 0x10000);  // invalidate self
+}
 
+// The death sequence. AL-GHUL flips its own SoftAP name to AL-GHUL_DOWN so the
+// sniffer and every phone SEE the twin die, lets a few death beacons go out,
+// then takes its radio off the air, wipes its config, and halts: the twin is
+// gone and silent. Reviving it needs a power cycle or a USB re-flash. Runs as a
+// task so it can delay (an esp_timer callback must not block).
+static void death_task(void *arg)
+{
+    wifi_config_t ap;
+    if (esp_wifi_get_config(WIFI_IF_AP, &ap) == ESP_OK) {
+        const char *down = "AL-GHUL_DOWN";
+        memset(ap.ap.ssid, 0, sizeof(ap.ap.ssid));
+        strncpy((char *)ap.ap.ssid, down, sizeof(ap.ap.ssid));
+        ap.ap.ssid_len = strlen(down);
+        esp_wifi_set_config(WIFI_IF_AP, &ap);
+        ESP_LOGW(TAG, "death rattle: SoftAP -> AL-GHUL_DOWN");
+    }
+    vTaskDelay(pdMS_TO_TICKS(1500));   // let the death beacons go out
+    ESP_LOGW(TAG, "going dark: wiping config and setting the kill marker");
+    wipe_config();                     // NVS + otadata + the other slot (not the running one)
+    // Set the reboot-persistent tombstone, then reset. Rebooting is the reliable
+    // way to drop the radio (trying to tear the live WiFi stack down from the app
+    // just lets it revive itself). On the next boot app_main sees the tombstone
+    // and stays dark; a power cycle clears RTC and revives the board.
+    g_tombstone = TOMBSTONE_MAGIC;
+    ESP_LOGW(TAG, "AL-GHUL neutralised. Resetting into the dark.");
     esp_restart();
+}
+
+static void do_self_wipe(void *arg)
+{
+    xTaskCreate(death_task, "death", 4096, NULL, 6, NULL);
+}
+
+// Public entry so the USB serial control path can trigger the exact same death
+// sequence without going through the WiFi control plane.
+void control_server_kill(void)
+{
+    xTaskCreate(death_task, "death", 4096, NULL, 6, NULL);
 }
 
 // True only if the request carries ?token=<ALGHUL_CONTROL_TOKEN>.
