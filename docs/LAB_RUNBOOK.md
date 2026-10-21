@@ -18,9 +18,10 @@ figure ready even before the lab session.
 
 ## B. Live run in the lab
 
-1. Power the sniffer (classic ESP32, COM8). Confirm it streams beacons:
-   `python -c "from src.capture import stream; [print(r) for r in stream('COM8',115200)]"`
-   (Ctrl+C to stop.)
+1. Power the sniffer (ESP32-S3, COM14 - was the classic ESP32 on COM8). Confirm it
+   streams beacons:
+   `python -c "from src.capture import stream; [print(r) for r in stream('COM14',115200)]"`
+   (Ctrl+C to stop.) Set the port in `config.SNIFFER_SERIAL_PORT` if yours differs.
 2. Power AL-GHUL (ESP32-S3). It clones your SSID, brings up its uplink, and starts
    the control server. Note its uplink IP from the serial monitor or your router,
    and set `ALGHUL_CONTROL_URL` in `config.py`.
@@ -37,16 +38,120 @@ figure ready even before the lab session.
    the Watcher, records accuracy/precision/recall/FPR, and lets the attacker
    evolve. The curve lands in `experiments/plots/`.
 
-## C. The finisher (kill-switch)
+## C. The finisher: from kill to takeover
 
-When the Watcher is confident, wipe AL-GHUL over its own OTA channel:
+Prerequisite: set `config.ALGHUL_CONTROL_TOKEN` to the same secret as
+`app_config.h` (for the real lab, `ghoul-begone-2026`), and join the laptop to the
+twin's own AP so `http://192.168.4.1` reaches it.
+
+`src.takeover` runs an escalation ladder; each level runs the ones below it first.
 
 ```powershell
-python -m src.killswitch --image ..\firmware\kill\build\kill.bin --yes
+# 1) REACH - prove the Watcher can talk to the twin (read-only)
+python -m src.takeover --level reach
+
+# 2) PROVE - command it live: flip its beacon_interval, watch the sniffer see it change
+python -m src.takeover --level prove
+
+# 3) OWN - reflash it over the air with firmware WE choose (OTA takeover)
+python -m src.takeover --level own --image ..\firmware\al_ghul\build\al_ghul.bin --yes
+
+# 4) KILL - make it erase itself and go dark
+python -m src.takeover --level kill --yes
 ```
 
-AL-GHUL erases its twin slot, saved disguise, and OTA selector, and goes dark.
-Revive it later only with a USB re-flash (BUILD_AND_FLASH.md step 3).
+Level `own` is the headline "remote takeover": the board ends up running an image
+the operator pushed. Level `kill` is the clean finish (same effect as the older
+`python -m src.killswitch --image ..\firmware\kill\build\kill.bin --yes`, which
+still works and now sends the token too). After a kill, only a physical USB
+re-flash revives the board (BUILD_AND_FLASH.md step 3).
+
+Honest framing: this works because it is **your own** board and you hold its
+token (and, as section D shows, on an unprotected board the token is dumpable
+anyway). Against a stranger's rogue AP you would not have the token, the channel,
+or the legal right, the deployable defence is the Watcher + WPA3/PMF + locate-
+and-remove (see docs/HOW_IT_WORKS.md section 6).
+
+## C.2 The credential-less crash (real-world class, no secret at all)
+
+The third real attack class needs **no token**: a single crafted 802.11 frame from
+radio range crashes the ESP WiFi stack (CVE-2019-12586 / CVE-2019-12588; see
+docs/MCU_SECURITY.md). This is run from a monitor-mode injector, not the control
+channel, and only against your own twin:
+
+```bash
+# Linux box with a monitor-mode NIC, e.g. in the lab. Example shape only:
+#   sudo airmon-ng start wlan0
+#   sudo python3 crash_frame.py --iface wlan0mon --target <AL-GHUL BSSID>
+# where crash_frame.py sends a malformed RSN-IE beacon/assoc-resp per the CVE.
+```
+
+Record whether AL-GHUL reboots (watchdog recovers) or deadlocks (no auto-reboot),
+that difference is itself the finding about why robustness + auto-reboot matter.
+Note: our twin is an AP, so reproducing the exact CVE path may need the right
+frame type/state; capture the serial log either way as evidence.
+
+## D. Flash-dump evidence (the twist)
+
+With AL-GHUL on USB, dump its flash and show the secrets are plaintext:
+
+```powershell
+esptool.py --port COM11 read_flash 0x0 0x400000 alghul_flash.bin
+# then search the dump for the SSID, the WiFi password, and the control token
+python -c "d=open('alghul_flash.bin','rb').read(); import re; print([s.decode(errors='replace') for s in re.findall(rb'[ -~]{6,}', d) if b'ghoul' in s or b'coffee' in s.lower()])"
+```
+
+Finding both the WiFi password and the kill token in cleartext is the proof that
+"authenticated" is only as strong as the chip's (default-off) secret storage.
+Mitigation: enable flash encryption + secure boot (docs/MCU_SECURITY.md).
+
+## E. The autonomous kill (the showstopper)
+
+The Watcher does not wait for a human. `src.sentinel` watches the air, and the
+moment it is confident a twin is present it runs the takeover/kill chain by
+itself, timestamping every step so you get real numbers.
+
+```powershell
+# dry-run, no hardware: watch it detect + "neutralise" a synthetic twin and
+# produce the latency figure for the report (experiments/plots/neutralize-*.png)
+python -m src.sentinel --mode synth
+
+# LIVE and armed: real sniffer, real neutralisation over AL-GHUL's control plane.
+# Pushes the "owned" payload first (SoftAP -> NEUTRALIZED_BY_THE_WATCHER, red LED),
+# then the kill. Mirrors TARGET DOWN + the latency onto every audience phone.
+python -m src.sentinel --mode serial --arm `
+  --own-image ..\firmware\pwned\build\pwned.bin `
+  --token ghoul-begone-2026 `
+  --companion-url https://ghoul.lausnanet.is --companion-key <PRESENTER_KEY>
+```
+
+What it writes each run (under `experiments/`):
+- `round-logs/killcam-<ts>.jsonl` - every event with a monotonic timestamp
+- `round-logs/neutralize-<ts>.json` - detect / neutralize / total latency
+- `plots/neutralize-<ts>.png` - the timeline figure
+
+The two visible payloads (build once, flashed/pushed later):
+- `firmware/pwned/build/pwned.bin` - the "owned" takeover image (SSID rename + red
+  LED). The Watcher pushes it over OTA to prove it controls the attacker's board.
+- AL-GHUL's own kill path now does a **death rattle**: it flips its SoftAP to
+  `AL-GHUL_DOWN` so the sniffer and phones see the twin die, then wipes.
+
+## F. Post-mortem forensics (read its diary)
+
+After the kill, dump the dead board and recover its secrets and its victim log:
+
+```powershell
+# analyse a dump you already pulled
+python -m src.forensics --dump ..\experiments\alghul_flash.bin
+# or pull it first from an ESP-IDF shell (esptool on PATH)
+python -m src.forensics --read --port COM11
+```
+
+Recovers (all cleartext, because flash encryption is off): the cloned SSID, the
+WiFi password, the control/kill token, the saved disguise, and the **victim
+diary** (every MAC that joined the clone, which AL-GHUL now logs to NVS as clients
+connect, metadata only, never payloads). Report lands at
+`experiments/forensics-report.md`.
 
 ## What to collect for the report (the 50%)
 
@@ -55,3 +160,14 @@ Revive it later only with a USB re-flash (BUILD_AND_FLASH.md step 3).
 - Notes/screenshots for H1 (phone auto-join) and H2 (working internet).
 - A short account of which disguise knobs the attacker evolved and which residual
   feature let the Watcher recover (expected: beacon-timing jitter floor).
+- The takeover demo transcript (`src.takeover` output for reach/prove/own/kill) as
+  evidence of remote control and OTA takeover.
+- The flash dump + the recovered plaintext secrets (section D) as the MCU-weakness
+  evidence, tied to the real CVEs/incidents in docs/MCU_SECURITY.md.
+- If attempted, the credential-less crash serial log (reboot vs deadlock).
+- The autonomous-kill latency figure + JSON (time-to-detect, time-to-neutralise)
+  from `src.sentinel`, and the kill-cam JSONL.
+- The forensics report (`experiments/forensics-report.md`): recovered secrets +
+  the victim diary, as the payoff of the flash-encryption-off weakness.
+- A photo/screen-grab of the board running the "owned" payload
+  (`NEUTRALIZED_BY_THE_WATCHER`, red LED) and of `AL-GHUL_DOWN` on the sniffer.

@@ -93,6 +93,64 @@ failures in the wild (OWASP IoT #1; Mirai) and routine MCU flash extraction.
 **Mitigation:** enable flash encryption + secure boot, and never hardcode secrets.
 *(That is why nothing in this repo hardcodes a secret, see `app_config.h`.)*
 
+## 5.5 From kill to takeover, and why it matters
+
+Wiping the board is the *polite* use of its weakness. The same defaults-off state
+means a compromised ESP32 can be **taken over**, not just switched off:
+
+- **Remote reflash (OTA takeover):** with the control channel reachable and the
+  secret known (and we just showed the secret is dumpable), new firmware can be
+  pushed over the air, the board now runs the operator's code.
+- **Credential-less crash:** the ESP WiFi stack has a documented class of bugs
+  where a single crafted 802.11 frame from radio range crashes it, no password
+  needed (CVE-2019-12586 / CVE-2019-12588).
+- **Clone:** the plaintext flash dump is enough to rebuild an identical board.
+
+On our own board this is the tame version (own channel, known secret). The point
+is the **class**: in the wild this has been fully unauthenticated, remote code
+execution over the air with no pairing at all (BrakTooth, CVE-2021-28139). A
+microcontroller cannot defend itself; the defence is the environment around it.
+The real incidents and CVEs behind each of these, with citations, are collected
+in [MCU_SECURITY.md](MCU_SECURITY.md), which is the evidence for this project's
+thesis: **small embedded chips must be deployed in protected environments, with
+their security features (flash encryption, secure boot, signed OTA) switched on.**
+
+## 5.6 The autonomous kill (the Watcher closes the loop)
+
+The finisher does not need a human. `watcher/src/sentinel.py` is the Watcher
+running as a closed loop: it watches the sniffer stream, scores every BSSID on
+the target SSID with the trained detector, and the moment a non-real BSSID is
+confidently a twin (>=80% of its frames, sustained over two windows) it fires the
+response by itself. It timestamps every step, so each run yields real numbers:
+
+- **time-to-detect**: from the twin appearing on the air to the Watcher being sure
+- **time-to-neutralise**: from sure to the board being dead
+- **total**: appear to dead
+
+These land in `experiments/round-logs/neutralize-*.json` and as a timeline figure
+in `experiments/plots/`. In the synthetic dry-run the whole thing takes well under
+a second; on hardware the OTA push dominates.
+
+The response escalates through three visible, real stages:
+
+1. **Takeover (OTA).** The Watcher reflashes the twin with `firmware/pwned` over
+   its own OTA channel. That image is deliberately, visibly not the twin any more:
+   its SoftAP announces `NEUTRALIZED_BY_THE_WATCHER` and the onboard LED glows red.
+   It proves that with flash encryption and secure boot off (the ESP32 default),
+   whoever holds the OTA channel owns the device.
+2. **The death rattle.** The kill path flips AL-GHUL's SoftAP to `AL-GHUL_DOWN`
+   before wiping, so the sniffer and every phone *see* the twin die, then it erases
+   its flash and goes dark.
+3. **The post-mortem.** `watcher/src/forensics.py` dumps the dead board and reads
+   its diary: the recovered secrets (cleartext, because encryption is off) and the
+   list of every MAC that joined the clone, which the twin logs to NVS as clients
+   connect (metadata only, never payloads).
+
+During a live talk the whole sequence is mirrored onto the audience companion:
+`ALIVE` flips to `TARGET DOWN` with the latency numbers, pushed from the sentinel.
+The point of making it autonomous and measured: an AI that finds a rogue AP and
+ends it on its own is exactly why these devices must sit in protected environments.
+
 ## 6. The honest limit
 
 You cannot remotely kill a **stranger's** rogue AP: you wouldn't have its token,
