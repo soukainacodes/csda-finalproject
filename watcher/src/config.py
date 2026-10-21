@@ -6,11 +6,12 @@ lab: your router, your AL-GHUL board, your sniffer. Nothing else is ever touched
 from pathlib import Path
 
 # ---- Your own network (the thing being cloned) -----------------------------
-REAL_ROUTER_SSID  = "YOUR_LAB_SSID"
+REAL_ROUTER_SSID  = "Kaffi_FRI"
 # The REAL AP's BSSID (e.g. your phone hotspot). This is the label anchor: during
 # capture, a frame from this BSSID is "real", a frame on the same SSID from any
 # other BSSID is "twin". Find it from the sniffer scan or `netsh wlan show interfaces`.
-REAL_ROUTER_BSSID = "aa:bb:cc:dd:ee:ff"
+REAL_ROUTER_BSSID = "ca:f0:57:fc:30:00"
+REAL_ROUTER_PSK   = "bestcoffee"   # for forensics to surface it from a dump
 
 # ---- AL-GHUL control plane -------------------------------------------------
 # The twin's SoftAP gateway. When the laptop joins the twin's own AP (Kaffi_FRI,
@@ -18,8 +19,14 @@ REAL_ROUTER_BSSID = "aa:bb:cc:dd:ee:ff"
 # to know its DHCP-assigned uplink IP.
 ALGHUL_CONTROL_URL = "http://192.168.4.1"
 
+# The shared secret that authorises /ota and /kill. MUST match ALGHUL_CONTROL_TOKEN
+# in firmware/al_ghul/main/app_config.h. This is the "leaked secret" the finisher
+# relies on: on a real attacker's board you would not have it (and, as the flash
+# dump shows, on an UNPROTECTED board it can be recovered from plaintext flash).
+ALGHUL_CONTROL_TOKEN = "ghoul-begone-2026"
+
 # ---- Sniffer serial link ---------------------------------------------------
-SNIFFER_SERIAL_PORT = "COM14"     # the ESP32-S3 sniffer (CH343 UART); was COM8 on the classic ESP32
+SNIFFER_SERIAL_PORT = "COM15"     # the ESP32-S3 sniffer (native USB this session; was COM14/COM8)
 SNIFFER_BAUD        = 115200
 
 # ---- Paths (all off Google Drive, under the project) -----------------------
