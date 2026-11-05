@@ -76,3 +76,10 @@ rebuild+reflash restores normal behavior (hopping Watcher, APSTA relay twin).
 ## Files
 raw + per-run sum: watcher-onboard-{raw,sum}-*.jsonl/json   capture tool: watcher_onboard.py
 channel-lock analysis: analyze_chlock.py   offline detectors: detector_analysis.py / _analysis2.py
+
+## Detection-latency distribution (addresses the single-run point-estimate critique)
+Across 9 logged clone-detection acquisitions (clear-to-detect gaps, all B-type on-board runs):
+samples = [2,2,2,3,3,6,6,7,10] s -> n=9, median 3 s, mean 4.6 s, range 2-10 s, stdev 2.7 s.
+The longer per-run "first-encounter" times (6-37 s) are the hopping Watcher's channel-sampling
+luck (time to first coincide on the clone's channel), not detection speed. Reported as a
+distribution, not a point estimate.
