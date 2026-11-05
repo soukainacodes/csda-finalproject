@@ -1,9 +1,11 @@
 """The attacker AI: a (1+lambda) evolutionary search over the disguise genome.
 
-Fitness = the Watcher's detection rate on the twin (LOWER is better for the
-attacker, it wants to be mistaken for the real router). This is a real learning
-agent reading the defender's feedback and evolving toward evasion, which is what
-makes the project genuinely AI-vs-AI rather than one AI plus random tweaks.
+HONEST STATUS (part of the DEMOTED arms-race framework): fitness = the Watcher's detection rate
+on the twin (lower is better for the attacker). In the synthetic backend this does read the
+defender's feedback and hill-climb; but in the live/serial backends there is no offline fitness,
+so the loop just calls mutate() (random tweaks). And on real hardware it never actually evades
+(the curve is flat). So this is an evasion FRAMEWORK, not a demonstrated AI-vs-AI result. See
+experiments/ml-watcher-limitations.md.
 """
 import random
 from .synth import default_genome, genome_space

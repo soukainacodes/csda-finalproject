@@ -1,0 +1,28 @@
+{
+  "scenario": "C",
+  "label": "control: laptop AP off, single AP only (false-positive check)",
+  "ts": "20261105-004503",
+  "secs": 60,
+  "target_ssid": "Kaffi_FRI",
+  "real_bssid_hint": "",
+  "n_bssids_seen": 1,
+  "bssids": [
+    "aa:d0:43:06:46:e1"
+  ],
+  "rule1": {
+    "detection_rate": 0.0,
+    "time_to_detect_s": null,
+    "bins": 16,
+    "hit_bins": 0
+  },
+  "clock_skew": {
+    "aa:d0:43:06:46:e1": {
+      "n": 20,
+      "skew_ppm": -4.1,
+      "fit_rmse_us": 13.0,
+      "rssi_med": -13.0
+    }
+  },
+  "board_detect_events": [],
+  "raw_file": "watcher-raw-C-20261105-004503.jsonl"
+}

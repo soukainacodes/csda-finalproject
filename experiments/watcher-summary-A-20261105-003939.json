@@ -1,0 +1,40 @@
+{
+  "scenario": "A",
+  "label": "real=laptop Kaffi_FRI (aa:d0) + twin (02:a1), different BSSIDs",
+  "ts": "20261105-003939",
+  "secs": 90,
+  "target_ssid": "Kaffi_FRI",
+  "real_bssid_hint": "aa:d0:43:06:46:e1",
+  "n_bssids_seen": 2,
+  "bssids": [
+    "02:a1:00:00:00:01",
+    "aa:d0:43:06:46:e1"
+  ],
+  "rule1": {
+    "detection_rate": 0.5,
+    "time_to_detect_s": 0,
+    "bins": 42,
+    "hit_bins": 21
+  },
+  "clock_skew": {
+    "02:a1:00:00:00:01": {
+      "n": 53,
+      "skew_ppm": -4.0,
+      "fit_rmse_us": 24.0,
+      "rssi_med": -13
+    },
+    "aa:d0:43:06:46:e1": {
+      "n": 138,
+      "skew_ppm": -31.0,
+      "fit_rmse_us": 79.0,
+      "rssi_med": -52.0
+    }
+  },
+  "board_detect_events": [
+    [
+      2593475,
+      "DETECTED"
+    ]
+  ],
+  "raw_file": "watcher-raw-A-20261105-003939.jsonl"
+}

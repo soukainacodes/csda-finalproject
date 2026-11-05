@@ -1,0 +1,62 @@
+{
+  "scenario": "A",
+  "label": "twin on own bssid 02:a1 + real AP aa:d0 (two BSSIDs)",
+  "ts": "20261105-123817",
+  "secs": 60,
+  "target_ssid": "Kaffi_FRI",
+  "on_board_verdict": "DETECTED",
+  "any_detected": true,
+  "ends_detected": true,
+  "reasons_seen": [
+    "second-bssid",
+    "spoofed-mac"
+  ],
+  "n_transitions": 2,
+  "transitions": [
+    {
+      "t": 17.2,
+      "state": "CLEAR",
+      "reasons": [],
+      "live_bssids": null,
+      "bssids": null
+    },
+    {
+      "t": 20.2,
+      "state": "DETECTED",
+      "reasons": [
+        "second-bssid",
+        "spoofed-mac"
+      ],
+      "live_bssids": 2,
+      "bssids": [
+        {
+          "b": "aa:d0:43:06:46:e1",
+          "rssi": -58
+        },
+        {
+          "b": "02:a1:00:00:00:01",
+          "rssi": -18
+        }
+      ]
+    }
+  ],
+  "kaffi_bssids": {
+    "02:a1:00:00:00:01": {
+      "n": 19,
+      "channels": [
+        1,
+        2,
+        5
+      ],
+      "distinct_ie_sets": 1
+    },
+    "aa:d0:43:06:46:e1": {
+      "n": 43,
+      "channels": [
+        6
+      ],
+      "distinct_ie_sets": 1
+    }
+  },
+  "raw_file": "watcher-onboard-raw-A-20261105-123817.jsonl"
+}

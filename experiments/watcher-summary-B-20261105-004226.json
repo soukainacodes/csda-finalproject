@@ -1,0 +1,28 @@
+{
+  "scenario": "B",
+  "label": "twin CLONES real BSSID aa:d0 - both share one BSSID",
+  "ts": "20261105-004226",
+  "secs": 90,
+  "target_ssid": "Kaffi_FRI",
+  "real_bssid_hint": "aa:d0:43:06:46:e1",
+  "n_bssids_seen": 1,
+  "bssids": [
+    "aa:d0:43:06:46:e1"
+  ],
+  "rule1": {
+    "detection_rate": 0.0,
+    "time_to_detect_s": null,
+    "bins": 50,
+    "hit_bins": 0
+  },
+  "clock_skew": {
+    "aa:d0:43:06:46:e1": {
+      "n": 165,
+      "skew_ppm": 16430589.9,
+      "fit_rmse_us": 72617788294.5,
+      "rssi_med": -52
+    }
+  },
+  "board_detect_events": [],
+  "raw_file": "watcher-raw-B-20261105-004226.jsonl"
+}

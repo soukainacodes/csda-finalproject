@@ -1,0 +1,68 @@
+{
+  "scenario": "A",
+  "label": "REDO two BSSIDs: twin 02:a1 + real aa:d0 (S24 off)",
+  "ts": "20261105-132518",
+  "secs": 60,
+  "target_ssid": "Kaffi_FRI",
+  "on_board_verdict": "DETECTED",
+  "any_detected": true,
+  "ends_detected": false,
+  "reasons_seen": [
+    "second-bssid",
+    "spoofed-mac"
+  ],
+  "n_transitions": 3,
+  "transitions": [
+    {
+      "t": 12.4,
+      "state": "CLEAR",
+      "reasons": [],
+      "live_bssids": null,
+      "bssids": null
+    },
+    {
+      "t": 19.4,
+      "state": "DETECTED",
+      "reasons": [
+        "second-bssid",
+        "spoofed-mac"
+      ],
+      "live_bssids": 2,
+      "bssids": [
+        {
+          "b": "aa:d0:43:06:46:e1",
+          "rssi": -58
+        },
+        {
+          "b": "02:a1:00:00:00:01",
+          "rssi": -68
+        }
+      ]
+    },
+    {
+      "t": 59.4,
+      "state": "CLEAR",
+      "reasons": [],
+      "live_bssids": null,
+      "bssids": null
+    }
+  ],
+  "kaffi_bssids": {
+    "aa:d0:43:06:46:e1": {
+      "n": 47,
+      "channels": [
+        6
+      ],
+      "distinct_ie_sets": 1
+    },
+    "02:a1:00:00:00:01": {
+      "n": 13,
+      "channels": [
+        1,
+        2
+      ],
+      "distinct_ie_sets": 1
+    }
+  },
+  "raw_file": "watcher-onboard-raw-A-20261105-132518.jsonl"
+}

@@ -1,0 +1,26 @@
+{
+  "scenario": "EvadeOff",
+  "label": "evasion baseline: twin clone aa:d0, vendor_ie OFF",
+  "ts": "20261105-131758",
+  "secs": 50,
+  "target_ssid": "Kaffi_FRI",
+  "on_board_verdict": "CLEAR (no detection emitted)",
+  "any_detected": false,
+  "ends_detected": null,
+  "reasons_seen": [],
+  "n_transitions": 0,
+  "transitions": [],
+  "kaffi_bssids": {
+    "aa:d0:43:06:46:e1": {
+      "n": 53,
+      "channels": [
+        1,
+        2,
+        5,
+        6
+      ],
+      "distinct_ie_sets": 2
+    }
+  },
+  "raw_file": "watcher-onboard-raw-EvadeOff-20261105-131758.jsonl"
+}

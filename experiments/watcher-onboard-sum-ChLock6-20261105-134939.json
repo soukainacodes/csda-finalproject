@@ -1,0 +1,31 @@
+{
+  "scenario": "ChLock6",
+  "label": "channel-locked ch6: twin clone aa:d0 + real aa:d0, both co-channel",
+  "ts": "20261105-134939",
+  "secs": 150,
+  "target_ssid": "Kaffi_FRI",
+  "on_board_verdict": "CLEAR (no detection emitted)",
+  "any_detected": false,
+  "ends_detected": false,
+  "reasons_seen": [],
+  "n_transitions": 1,
+  "transitions": [
+    {
+      "t": 118.4,
+      "state": "CLEAR",
+      "reasons": [],
+      "live_bssids": null,
+      "bssids": null
+    }
+  ],
+  "kaffi_bssids": {
+    "aa:d0:43:06:46:e1": {
+      "n": 1442,
+      "channels": [
+        6
+      ],
+      "distinct_ie_sets": 2
+    }
+  },
+  "raw_file": "watcher-onboard-raw-ChLock6-20261105-134939.jsonl"
+}

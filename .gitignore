@@ -22,8 +22,7 @@ Thumbs.db
 .DS_Store
 *.swp
 
-# ---- Measurement captures + demo logs (evidence; backed up to Drive Project/Task3-Detection, not versioned) ----
-experiments/*.jsonl
-experiments/*.json
-experiments/session-hijack-demo-*.log
+# ---- Logs ARE versioned (reproducers can read the raw results) ----
+# raw captures, per-run summaries and demo transcripts live in experiments/ and are committed.
+# Only large binary flash dumps (*.bin) and the runtime portal flag stay out.
 gateway/*.flag

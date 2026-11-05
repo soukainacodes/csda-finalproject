@@ -1,0 +1,23 @@
+{
+  "scenario": "EvadeVendor",
+  "label": "evasion: twin clone aa:d0 + Microsoft vendor IE (mimic real AP)",
+  "ts": "20261105-132111",
+  "secs": 60,
+  "target_ssid": "Kaffi_FRI",
+  "on_board_verdict": "CLEAR (no detection emitted)",
+  "any_detected": false,
+  "ends_detected": null,
+  "reasons_seen": [],
+  "n_transitions": 0,
+  "transitions": [],
+  "kaffi_bssids": {
+    "aa:d0:43:06:46:e1": {
+      "n": 44,
+      "channels": [
+        6
+      ],
+      "distinct_ie_sets": 1
+    }
+  },
+  "raw_file": "watcher-onboard-raw-EvadeVendor-20261105-132111.jsonl"
+}

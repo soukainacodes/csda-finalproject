@@ -1,0 +1,54 @@
+{
+  "scenario": "B",
+  "label": "twin clones aa:d0 + real aa:d0 (exact clone), S24 off",
+  "ts": "20261105-125100",
+  "secs": 60,
+  "target_ssid": "Kaffi_FRI",
+  "on_board_verdict": "DETECTED",
+  "any_detected": true,
+  "ends_detected": true,
+  "reasons_seen": [
+    "ie-mismatch",
+    "spoofed-mac",
+    "tsf-jump"
+  ],
+  "n_transitions": 2,
+  "transitions": [
+    {
+      "t": 35.4,
+      "state": "CLEAR",
+      "reasons": [],
+      "live_bssids": null,
+      "bssids": null
+    },
+    {
+      "t": 37.4,
+      "state": "DETECTED",
+      "reasons": [
+        "ie-mismatch",
+        "tsf-jump",
+        "spoofed-mac"
+      ],
+      "live_bssids": 1,
+      "bssids": [
+        {
+          "b": "aa:d0:43:06:46:e1",
+          "rssi": -17
+        }
+      ]
+    }
+  ],
+  "kaffi_bssids": {
+    "aa:d0:43:06:46:e1": {
+      "n": 63,
+      "channels": [
+        1,
+        2,
+        5,
+        6
+      ],
+      "distinct_ie_sets": 2
+    }
+  },
+  "raw_file": "watcher-onboard-raw-B-20261105-125100.jsonl"
+}

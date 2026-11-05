@@ -1,0 +1,31 @@
+{
+  "scenario": "EvVendor",
+  "label": "evasion: twin clone aa:d0 + Microsoft vendor IE",
+  "ts": "20261105-132754",
+  "secs": 55,
+  "target_ssid": "Kaffi_FRI",
+  "on_board_verdict": "CLEAR (no detection emitted)",
+  "any_detected": false,
+  "ends_detected": false,
+  "reasons_seen": [],
+  "n_transitions": 1,
+  "transitions": [
+    {
+      "t": 5.5,
+      "state": "CLEAR",
+      "reasons": [],
+      "live_bssids": null,
+      "bssids": null
+    }
+  ],
+  "kaffi_bssids": {
+    "aa:d0:43:06:46:e1": {
+      "n": 41,
+      "channels": [
+        6
+      ],
+      "distinct_ie_sets": 1
+    }
+  },
+  "raw_file": "watcher-onboard-raw-EvVendor-20261105-132754.jsonl"
+}

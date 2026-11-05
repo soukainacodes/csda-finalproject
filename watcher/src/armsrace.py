@@ -1,5 +1,12 @@
 """The arms race: run attacker vs Watcher over rounds and record the curve.
 
+HONEST STATUS: this is the DEMOTED arms-race FRAMEWORK, not a result. On real hardware the
+curve stayed FLAT (accuracy ~1.0 every round, no evasion); the only "zig-zag" is the synthetic
+run, whose gap is hand-coded in synth.py (circular). In live/serial mode the attacker does NOT
+hill-climb on a fitness signal, it just mutates randomly (see set_disguise paths below). Report
+this as a framework and a LIMITATION (experiments/ml-watcher-limitations.md), and rest the
+detection findings on the measured physical detectors and experiments/ml_real.py.
+
 Each round: apply the attacker's disguise -> capture -> retrain the Watcher on
 ALL data so far -> measure detection -> the attacker evolves to evade. The
 detection-accuracy curve across rounds is the H4 research result.

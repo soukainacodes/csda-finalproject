@@ -1,0 +1,54 @@
+{
+  "scenario": "Cclean",
+  "label": "clean single-emitter: twin alone on 02:a1, hotspot stays off",
+  "ts": "20261105-124109",
+  "secs": 30,
+  "target_ssid": "Kaffi_FRI",
+  "on_board_verdict": "DETECTED",
+  "any_detected": true,
+  "ends_detected": true,
+  "reasons_seen": [
+    "second-bssid",
+    "spoofed-mac"
+  ],
+  "n_transitions": 1,
+  "transitions": [
+    {
+      "t": 3.4,
+      "state": "DETECTED",
+      "reasons": [
+        "second-bssid",
+        "spoofed-mac"
+      ],
+      "live_bssids": 2,
+      "bssids": [
+        {
+          "b": "aa:d0:43:06:46:e1",
+          "rssi": -69
+        },
+        {
+          "b": "02:a1:00:00:00:01",
+          "rssi": -12
+        }
+      ]
+    }
+  ],
+  "kaffi_bssids": {
+    "aa:d0:43:06:46:e1": {
+      "n": 24,
+      "channels": [
+        6
+      ],
+      "distinct_ie_sets": 1
+    },
+    "02:a1:00:00:00:01": {
+      "n": 8,
+      "channels": [
+        1,
+        2
+      ],
+      "distinct_ie_sets": 1
+    }
+  },
+  "raw_file": "watcher-onboard-raw-Cclean-20261105-124109.jsonl"
+}

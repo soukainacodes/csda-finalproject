@@ -1,0 +1,28 @@
+{
+  "scenario": "A",
+  "label": "twin normal bssid + real S24 (different BSSIDs)",
+  "ts": "20261105-002106",
+  "secs": 90,
+  "target_ssid": "Kaffi_FRI",
+  "real_bssid_hint": "3e:c7:a6:e9:6b:af",
+  "n_bssids_seen": 1,
+  "bssids": [
+    "02:a1:00:00:00:01"
+  ],
+  "rule1": {
+    "detection_rate": 0.0,
+    "time_to_detect_s": null,
+    "bins": 38,
+    "hit_bins": 0
+  },
+  "clock_skew": {
+    "02:a1:00:00:00:01": {
+      "n": 173,
+      "skew_ppm": -3.7,
+      "fit_rmse_us": 23.6,
+      "rssi_med": -62
+    }
+  },
+  "board_detect_events": [],
+  "raw_file": "watcher-raw-A-20261105-002106.jsonl"
+}

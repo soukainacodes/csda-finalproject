@@ -1,5 +1,11 @@
 """Synthetic beacon generator.
 
+HONEST STATUS: part of the DEMOTED arms-race framework. The twin/real separation is hand-coded
+into this generator, so the model's perfect synthetic accuracy is CIRCULAR, not a detection
+result, and on real hardware the arms-race curve stayed FLAT (no evasion). Treat this as a
+no-hardware pipeline harness and a stated LIMITATION (see experiments/ml-watcher-limitations.md).
+The real detection findings are the measured physical detectors and experiments/ml_real.py.
+
 Purpose: let the whole Watcher + arms-race pipeline run and be validated WITHOUT
 hardware, and give the attacker a surrogate to evolve against offline. The record
 schema is identical to the sniffer's real output, so the exact same downstream

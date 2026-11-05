@@ -1,0 +1,24 @@
+{
+  "scenario": "C",
+  "label": "single emitter control: twin alone on aa:d0, real Kaffi_FRI OFF",
+  "ts": "20261105-125911",
+  "secs": 45,
+  "target_ssid": "Kaffi_FRI",
+  "on_board_verdict": "CLEAR (no detection emitted)",
+  "any_detected": false,
+  "ends_detected": null,
+  "reasons_seen": [],
+  "n_transitions": 0,
+  "transitions": [],
+  "kaffi_bssids": {
+    "aa:d0:43:06:46:e1": {
+      "n": 13,
+      "channels": [
+        1,
+        2
+      ],
+      "distinct_ie_sets": 1
+    }
+  },
+  "raw_file": "watcher-onboard-raw-C-20261105-125911.jsonl"
+}

@@ -39,9 +39,13 @@ label leakage. The detector only sees radio/behavioural fingerprints:
 - capability bits
 - the locally-administered MAC bit (an evadable tell)
 
-A `RandomForest` classifier learns these. On live captured beacons it reached
-**accuracy 1.00, precision 1.00, recall 1.00, false-positive rate 0.00** (the
-false-positive rate matters: a detector that cries wolf on real APs is useless).
+A `RandomForest` trained on the **real** captures (no synthetic data, no BSSID/MAC as a
+feature) separates twin from real with zero false positives, **but with two radios that is
+separability, not generalization**. Its real value is that its feature importances
+independently rank the same physical tells the hand detectors use (clock-skew, IE, timing).
+Honest write-up: [`experiments/ml-real-results.md`](../experiments/ml-real-results.md). An
+earlier synthetic model reported a perfect score, but that was circular (the gap was hand-coded
+into the generator); see [`experiments/ml-watcher-limitations.md`](../experiments/ml-watcher-limitations.md).
 
 Code: `watcher/src/features.py` (features), `watcher/src/train.py` (classifier),
 `watcher/src/evaluate.py` (metrics).
@@ -72,10 +76,12 @@ for r in range(rounds):
     deployed_model = model                   # this round's model is next round's "deployed"
 ```
 
-**Honest result:** the clean zig-zag is the **synthetic** run (`--mode synth`),
-where the attacker can approach the real fingerprint. On **real hardware** the
-ESP32 twin differs from a phone AP in too many stable ways to ever evade, so the
-live curve stayed **flat at 100%**, a strong defensive result. Both are reported.
+**Honest result:** this is a **framework, not a result.** The "clean zig-zag" only appears in
+the **synthetic** run (`--mode synth`), where the gap was hand-coded into the generator, so its
+perfect accuracy is circular. On **real hardware** the curve stayed **flat** (the ESP32's
+disguise knobs are too coarse to evade), which we report as a **limitation**, not a strong
+defensive result. The project's own [`ml-watcher-limitations.md`](../experiments/ml-watcher-limitations.md)
+demolishes the earlier 100% claim; the detection findings rest on the measured physical detectors.
 
 ## 5. The finisher (kill-switch), and why it is weak
 
@@ -91,7 +97,7 @@ it in **plaintext**. So the "authentication" is only as strong as the chip's
 secret storage, which by default is an open book. This mirrors hardcoded-secret
 failures in the wild (OWASP IoT #1; Mirai) and routine MCU flash extraction.
 **Mitigation:** enable flash encryption + secure boot, and never hardcode secrets.
-*(That is why nothing in this repo hardcodes a secret, see `app_config.h`.)*
+*(The values in `app_config.h` are **lab throwaways**; replace them with your own before you run this, and do not reuse them anywhere real.)*
 
 ## 5.5 From kill to takeover, and why it matters
 

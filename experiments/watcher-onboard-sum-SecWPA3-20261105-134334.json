@@ -1,0 +1,23 @@
+{
+  "scenario": "SecWPA3",
+  "label": "security-mode WPA3-SAE, clone aa:d0 (120s, validated)",
+  "ts": "20261105-134334",
+  "secs": 120,
+  "target_ssid": "Kaffi_FRI",
+  "on_board_verdict": "CLEAR (no detection emitted)",
+  "any_detected": false,
+  "ends_detected": null,
+  "reasons_seen": [],
+  "n_transitions": 0,
+  "transitions": [],
+  "kaffi_bssids": {
+    "aa:d0:43:06:46:e1": {
+      "n": 88,
+      "channels": [
+        6
+      ],
+      "distinct_ie_sets": 1
+    }
+  },
+  "raw_file": "watcher-onboard-raw-SecWPA3-20261105-134334.jsonl"
+}

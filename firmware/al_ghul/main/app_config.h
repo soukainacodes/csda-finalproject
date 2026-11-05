@@ -63,7 +63,7 @@
 // (names only, never payloads), to show that a device on the twin leaks its whole
 // browsing map even over HTTPS. Keep this 0 in the benign/relay build. Runs ONLY
 // on the student's own devices in the isolated lab. See docs/ETHICS.md.
-#define ALGHUL_DANGER_DEMO        1
+#define ALGHUL_DANGER_DEMO        0
 
 // ---- Status LED ------------------------------------------------------------
 // Onboard addressable RGB LED (WS2812). GREEN = clone empty (no victim joined),

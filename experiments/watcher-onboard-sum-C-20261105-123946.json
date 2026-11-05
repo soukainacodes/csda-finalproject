@@ -1,0 +1,41 @@
+{
+  "scenario": "C",
+  "label": "single emitter control: twin alone on 02:a1, hotspot off",
+  "ts": "20261105-123946",
+  "secs": 60,
+  "target_ssid": "Kaffi_FRI",
+  "on_board_verdict": "CLEAR (no detection emitted)",
+  "any_detected": false,
+  "ends_detected": false,
+  "reasons_seen": [],
+  "n_transitions": 1,
+  "transitions": [
+    {
+      "t": 36.7,
+      "state": "CLEAR",
+      "reasons": [],
+      "live_bssids": null,
+      "bssids": null
+    }
+  ],
+  "kaffi_bssids": {
+    "02:a1:00:00:00:01": {
+      "n": 18,
+      "channels": [
+        1,
+        2,
+        3,
+        5
+      ],
+      "distinct_ie_sets": 1
+    },
+    "aa:d0:43:06:46:e1": {
+      "n": 42,
+      "channels": [
+        6
+      ],
+      "distinct_ie_sets": 1
+    }
+  },
+  "raw_file": "watcher-onboard-raw-C-20261105-123946.jsonl"
+}
