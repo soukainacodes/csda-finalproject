@@ -242,6 +242,20 @@ authorised coursework for an academic security module. Full statement: [`docs/ET
 
 ---
 
+## Get the code
+
+<div align="center">
+
+**Scan to clone and reproduce the whole project.**
+
+<img src="docs/qr-github.png" alt="github.com/soukainacodes/csda-finalproject" width="200">
+
+[`github.com/soukainacodes/csda-finalproject`](https://github.com/soukainacodes/csda-finalproject)
+
+</div>
+
+---
+
 <div align="center">
 
 *Al-Ghūl is the shape-shifting demon of Arabic folklore, origin of the English "ghoul" and of the star name
