@@ -1,0 +1,328 @@
+﻿# AL-GHUL twin serial console (COM18, USB-Serial-JTAG) - security-mode experiment
+# Captured live during the 2026-11-04 session. Lines below were read off the board's
+# own heartbeat as each case ran. From this point the capture is a direct tee (below).
+# ----------------------------------------------------------------------------------
+
+[AUTHMODE WPA2-PSK -> WPA3-SAE]
+I (5500) wifi_twin: switching advertised security -> WPA3-SAE (brief restart)
+AUTHMODE_OK WPA3-SAE
+I (10490) al_ghul: alive #2 | security=WPA3-SAE | uplink=yes | clone_clients=0 | heap=221528
+
+[CASE 3  WPA3-SAE  -> victim JOINED]
+I (220540) al_ghul: alive #44 | security=WPA3-SAE | uplink=yes | clone_clients=1 | heap=215532
+I (220540) al_ghul:   joined 0: 82:0b:90:62:d6:dc | rssi -13
+I (225540) al_ghul: alive #45 | security=WPA3-SAE | uplink=yes | clone_clients=1 | heap=215532
+I (225540) al_ghul:   joined 0: 82:0b:90:62:d6:dc | rssi -13
+
+[AUTHMODE WPA3-SAE -> WPA2-PSK+PMF]
+I (310780) wifi_twin: switching advertised security -> WPA2-PSK+PMF (brief restart)
+AUTHMODE_OK WPA2-PSK+PMF
+I (315590) al_ghul: alive #63 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=0 | heap=229076
+
+[CASE 2  WPA2-PSK+PMF  read at 2026-11-04T19:11:43.6134562+00:00]
+I (325590) al_ghul: alive #65 | security=WPA2-PSK+PMF | uplink=no | clone_clients=0 | heap=229120
+I (330450) wifi:set rx beacon pti, rx_bcn_pti: 0, bI (460590) al_ghul: alive #92 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=0 | heap=228600
+I (465590) al_ghul: alive #93 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=0 | heap=228600
+I (470590) al_ghul: alive #94 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=0 | heap=228600
+I (475590) al_ghul: alive #95 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=0 | heap=228600
+I (480590) al_ghul: alive #96 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=0 | heap=228600
+I (485590) al_ghul: alive #97 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=0 | heap=228600
+I (490590) al_ghul: alive #98 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=0 | heap=228600
+I (495590) al_ghul: alive #99 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=0 | heap=228600
+I (500590) al_ghul: alive #100 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=0 | heap=228600
+I (505590) al_ghul: alive #101 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=0 | heap=228600
+I (510590) al_ghul: alive #102 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=0 | heap=228600
+I (515590) al_ghul: alive #103 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=0 | heap=228600
+I (520590) al_gI (715640) al_ghul: alive #143 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=1 | heap=226208
+I (715640) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -32
+I (720640) al_ghul: alive #144 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=1 | heap=226208
+I (720640) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -32
+I (725640) al_ghul: alive #145 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=1 | heap=226208
+
+[CASE 4  WPA2/WPA3 transition  switch at 2026-11-04T19:19:33.6877288+00:00]
+I (730640) al_ghul: alive #146 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=1 | heap=226208
+I (735640) al_ghul: alive #147 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=1 | heap=226208
+I (740640) al_ghul: alive #148 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=1 | heap=226208
+I (745640) al_ghul: alive #149 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=1 | heap=226208
+I (750640) al_ghul: alive #150 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=1 | heap=226208
+I (755640) al_ghul: alive #151 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=1 | heap=I (927770) wifi_twin: switching advertised security -> WPA2/WPA3-transition (brief restart)
+W (927880) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+AUTHMODE_OK WPA2/WPA3-transition
+I (930690) al_ghul: alive #186 | security=WPA2/WPA3-transition | uplink=no | clone_clients=0 | heap=221980
+I (935300) al_ghul: a client joined the clone [security=WPA2/WPA3-transition]
+I (935690) al_ghul: alive #187 | security=WPA2/WPA3-transition | uplink=yes | clone_clients=1 | heap=214748
+I (940690) al_ghul: alive #188 | security=WPA2/WPA3-transition | uplink=yes | clone_clients=1 | heap=215480
+I (940690) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -31
+I (945690) al_ghul: alive #189 | security=WPA2/WPA3-transition | uplink=yes | clone_clients=I (965740) al_ghul: alive #193 | security=WPA2/WPA3-transition | uplink=yes | clone_clients=1 | heap=215480
+I (965740) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -31
+I (970740) al_ghul: alive #194 | security=WPA2/WPA3-transition | uplink=yes | clone_clients=1 | heap=215480
+I (970740) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -31
+
+
+==== CORRECTED EXPERIMENT: SILENT AUTO-ROAM (stored creds, no typing) ====
+[reset: twin -> WPA2 at 2026-11-04T19:40:04.5253094+00:00]
+I (975740) al_ghul: alive #195 | security=WPA2/WPA3-transition | uplink=yes | clone_clients=1 | heap=215480
+I (980740) al_ghul: alive #196 | security=WPA2/WPA3-transition | uplink=yes | clone_clients=1 | heap=215480
+I (985740) al_ghul: alive #197 | security=WPA2/WPA3-transition | uplink=yes | clone_clients=1 | heap=215260
+I (990740) al_ghul: alive #198 | security=WPA2/WPA3-transition | uplink=yes | clone_clients=1 | heap=215488
+I (995740) al_ghul: alive #199 | security=WPA2/WPA3-transition | uplink=yes | clone_clients=1 | heap=215488
+I (1000740) al_ghul: alive #200I (2158630) wifi_twin: switching advertised security -> WPA2-PSK (brief restart)
+W (2158670) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+AUTHMODE_OK WPA2-PSK
+I (2160790) al_ghul: alive #432 | security=WPA2-PSK | uplink=no | clone_clients=0 | heap=229140
+I (2165790) al_ghul: alive #433 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228624
+[CASE WPA2 silent auto-roam, watch at 2026-11-04T19:40:43.9823730+00:00]
+I (2170790) al_ghul: alive #434 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228644
+I (2175790) al_ghul: alive #435 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228644
+I (2180790) al_ghul: alive #436 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228644
+I (2185790) al_ghul: alive #437 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228644
+I (2190790) al_ghul: alive #438 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228644
+I (2195790) al_ghul: alive #439 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228644
+I (2200790) al_ghul: alive #440 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228644
+I (2205790) al_ghul: alive #441 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228644
+I (2210790) al_ghul: alive #442 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228644
+I (2215790) al_ghul: alive #443 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228644
+I (2220790) al_ghul: alive #444 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228644
+
+[MATCHED CASE 1: real WPA2 + twin WPA2, silent-roam watch at 2026-11-04T19:51:14.2839827+00:00]
+I (2225790) al_ghul: alive #445 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228644
+I (2230790) al_ghul: alive #446 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228644
+I (2235790) al_ghul: alive #447 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228644
+I (2240790) al_ghul: alive #448 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228644
+I (2245790) al_ghul: alive #449 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228644
+I (2250790) al_ghul: alive #450 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228644
+I (2255790) al_ghul: alive #451 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228644
+I (2260790) al_ghul: alive #452 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228644
+I (2265790) al_ghul: alive #453 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228644
+I (2270790) al_ghul: alive #454 | secI (2830840) al_ghul: alive #566 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228412
+I (2835840) al_ghul: alive #567 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228412
+I (2840840) al_ghul: alive #568 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228412
+I (2845840) al_ghul: alive #569 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228412
+I (2850840) al_ghul: alive #570 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228412
+I (2855840) al_ghul: alive #571 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228412
+
+[MATCHED CASE 1 (real S24 OFF): stored-cred auto-join watch at 2026-11-04T19:53:54.1891321+00:00]
+I (2860840) al_ghul: alive #572 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228412
+I (2865840) al_ghul: alive #573 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228412
+I (2870840) al_ghul: alive #574 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228412
+I (2875840) al_ghul: alive #575 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228412
+I (2880840) al_ghul: alive #576 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228412
+I (2885840) al_ghul: alive #577 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228412
+I (2890840) al_ghul: alive #578 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228412
+I (2895840) al_ghul: alive #579 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228412
+I (2900840) al_ghul: alive #580 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228412
+I (2905840) al_ghul: alive #581 | secI (2990890) al_ghul: alive #598 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=225956
+I (2990890) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -41
+I (2995890) al_ghul: alive #599 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=225956
+I (2995890) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -41
+I (3000890) al_ghul: alive #600 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=225956
+I (3000890) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -41
+I (3005890) al_ghul: alive #601 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=225956
+I (3005890) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -41
+I (3010890) al_ghul: alive #602 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=225956
+I (3010890) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -41
+I (3015890) al_ghul: alive #603 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=225956
+I (3015890) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -41
+
+[MATCHED CASE WPA3: twin -> WPA3 at 2026-11-04T19:55:26.3934907+00:00]
+I (3020890) al_ghul: alive #604 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=225956
+I (3025890) al_ghul: alive #605 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=225956
+I (3030890) al_ghul: alive #606 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=225956
+I (3035890) al_ghul: alive #607 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=226196
+I (3040890) al_ghul: alive #608 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=226196
+I (3045890) al_ghul: alive #609 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=226196
+I (3080540) wifi_twin: switching advertised security -> WPA3-SAE (brief restart)
+W (3080650) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+AUTHMODE_OK WPA3-SAE
+I (3080940) al_ghul: alive #616 | security=WPA3-SAE | uplink=no | clone_clients=0 | heap=221988
+I (3085940) al_ghul: alive #617 | security=WPA3-SAE | uplink=yes | clone_clients=0 | heap=221492
+
+[CASE 1 redo clean: twin -> WPA2 at 2026-11-04T19:57:58.0345706+00:00]
+I (3090940) al_ghul: alive #618 | security=WPA3-SAE | uplink=yes | clone_clients=0 | heap=221484
+I (3095940) al_ghul: alive #619 | security=WPA3-SAE | uplink=yes | clone_clients=0 | heap=221484
+I (3100940) al_ghul: alive #620 | security=WPA3-SAE | uplink=yes | clone_clients=0 | heap=221484
+I (3105940) al_ghul: alive #621 | security=WPA3-SAE | uplink=yes | clone_clients=0 | heap=221484
+I (3110940) al_ghul: alive #622 | security=WPA3-SAE | uplink=yes | clone_clients=0 | heap=221484
+I (3113870) al_ghul: a client joined the clone [security=WPA3-SAE]
+W (3232340) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+AUTHMODE_OK WPA2-PSK
+I (3235940) al_ghul: alive #647 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=229056
+
+[CASE 1 clean WPA2, real S24 OFF, watch at 2026-11-04T20:01:16.1762909+00:00]
+I (481) al_ghul: alive #0 | security=WPA2-PSK | uplink=no | clone_clients=0 | heap=251500
+I (480) al_ghul: alive #0 | security=WPA2-PSK | uplink=no | clone_clients=0 | heap=251500
+I (5480) al_ghul: alive #1 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=229020
+I (7820) al_ghul: a client joined the clone [security=WPA2-PSK]
+I (10480) al_ghul: alive #2 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=225280
+I (10480) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -57
+I (15480) al_ghul: alive #3 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=225644
+I (15480) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -62
+I (20480) al_ghul: alive #4 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=226188
+I (20480) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -62
+I (25480) al_ghul: alive #5 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=226188
+I (25480) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -63
+
+[MATCHED CASE WPA3 (clean): twin -> WPA3 at 2026-11-04T20:02:18.3786696+00:00]
+I (30480) al_ghul: alive #6 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=225980
+I (35480) al_ghul: alive #7 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=226188
+I (40480) al_ghul: alive #8 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=225920
+I (45480) al_ghul: alive #9 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=226188
+I (50480) al_ghul: alive #10 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=226188
+I (55480) al_ghul: alive #11 | security=WPA2-PSK | uplinI (62520) wifi_twin: switching advertised security -> WPA3-SAE (brief restart)
+W (62620) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+AUTHMODE_OK WPA3-SAE
+I (65530) al_ghul: alive #13 | security=WPA3-SAE | uplink=no | clone_clients=0 | heap=221652
+I (70530) al_ghul: alive #14 | security=WPA3-SAE | uplink=yes | clone_clients=0 | heap=217048
+
+[MATCHED CASE WPA2+PMF: twin -> WPA2-PMF at 2026-11-04T20:04:22.9387908+00:00]
+I (70810) al_ghul: a client joined the clone [security=WPA3-SAE]
+W (187130) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+AUTHMODE_OK WPA2-PSK+PMF
+I (190530) al_ghul: alive #38 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=0 | heap=228076
+
+[MATCHED CASE WPA2+PMF, real S24 OFF, watch at 2026-11-04T20:06:58.4527926+00:00]
+I (469) al_ghul: alive #0 | security=WPA2-PSK | uplink=no | clone_clients=0 | heap=251508
+I (5469) al_ghul: alive #1 | security=WPA2-PSK | uplink=no | clone_clients=0 | heap=251444
+I (530) al_ghul: alive #0 | security=WPA2-PSK | uplink=no | clone_clients=0 | heap=251368
+I (5530) al_ghul: alive #1 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228892
+I (7570) al_ghul: a client joined the clone [security=WPA2-PSK]
+I (10530) al_ghul: alive #2 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=226072
+I (10530) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -41
+I (15530) al_ghul: alive #3 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=226068
+I (15530) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -39
+I (20530) al_ghul: alive #4 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=226068
+I (20530) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -33
+I (25530) al_ghul: alive #5 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=226068
+I (25530) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -32
+
+[MATCHED CASE WPA2+PMF (set+watch) at 2026-11-04T20:10:18.0377855+00:00]
+I (30530) al_ghul: alive #6 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=226068
+I (30530) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -32
+I (35530) al_ghul: alive #7 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=226068
+I (35530) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -32
+I (40530) al_ghul: alive #8 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=226068
+I (40530) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -34
+I (45530) al_ghul: alive #9 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=226068
+I (45530) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -34
+I (50530) al_ghul: alive #10 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=226068
+I (50530) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -34
+I (55530) al_ghul: alive #11 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=226068
+W (199990) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+AUTHMODE_OK WPA2-PSK+PMF
+I (200580) al_ghul: alive #40 | security=WPA2-PSK+PMF | uplink=no | clone_clients=0 | heap=229092
+I (205580) al_ghul: alive #41 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=0 | heap=228404
+I (207080) al_ghul: a client joined the clone [security=WPA2-PSK+PMF]
+I (210580) al_ghul: alive #42 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=1 | heap=224760
+I (210580) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -52
+I (215580) al_ghul: alive #43 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=1 | heap=225512
+I (215580) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -52
+I (220580) al_ghul: alive #44 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=1 | heap=225912
+I (220580) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -52
+I (225580) al_ghul: alive #45 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=1 | heap=225912
+I (225580) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -52
+
+[MATCHED CASE transition (set+watch) at 2026-11-04T20:11:31.7004583+00:00]
+I (230580) al_ghul: alive #46 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=1 | heap=225912
+I (230580) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -52
+I (235580) al_ghul: alive #47 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=1 | heap=225912
+I (235580) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -52
+I (240580) al_ghul: alive #48 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=1 | heap=225912
+I (240580) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -52
+I (245580) al_ghul: alive #49 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=1 | heap=225912
+I (245580) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -52
+I (250580) al_ghul: alive #50 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=1 | heap=225704
+I (250580) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -52
+I (255580) al_ghul: alive #51 | security=WPA2-PSK+PMF | uplink=yes | clone_clients=1 | heap=225912I (273580) wifi_twin: switching advertised security -> WPA2/WPA3-transition (brief restart)
+W (273660) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+AUTHMODE_OK WPA2/WPA3-transition
+I (275630) al_ghul: alive #55 | security=WPA2/WPA3-transition | uplink=no | clone_clients=0 | heap=221512
+I (280530) al_ghul: a client joined the clone [security=WPA2/WPA3-transition]
+I (280630) al_ghul: alive #56 | security=WPA2/WPA3-transition | uplink=yes | clone_clients=1 | heap=217512
+I (280630) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -53
+I (285630) al_ghul: alive #57 | security=WPA2/WPA3-transition | uplink=yes | clone_clients=1 | heap=218340
+I (285630) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -53
+I (290630) al_ghul: alive #58 | security=WPA2/WPA3-transition | uplink=yes | clone_clients=1 | heap=218340
+I (290630) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -53
+I (295630) al_ghul: alive #59 | security=WPA2/WPA3-transition | uplink=yes | clone_clients=1 | heap=218340
+I (295630) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -53
+I (300630) al_ghul: alive #60 | security=WPA2/WPA3-transition | uplink=yes | clone_clients=1 | heap=218340
+
+[DECISIVE MATCHED CASE WPA3 (set+watch) at 2026-11-04T20:18:46.5626257+00:00]
+I (469) al_ghul: alive #0 | security=WPA2-PSK | uplink=no | clone_clients=0 | heap=251376
+W (350) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+W (470) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+AUTHMODE_OK WPA3-SAE
+I (570) al_ghul: alive #0 | security=WPA3-SAE | uplink=no | clone_clients=0 | heap=243664
+I (5580) al_ghul: alive #1 | security=WPA3-SAE | uplink=yes | clone_clients=0 | heap=221368
+I (10580) al_ghul: alive #2 | security=WPA3-SAE | uplink=yes | clone_clients=0 | heap=221368
+I (15580) al_ghul: alive #3 | security=WPA3-SAE | uplink=yes | clone_clients=0 | heap=221368
+I (20580) al_ghul: alive #4 | security=WPA3-SAE | uplink=yes | clone_clients=0 | heap=221368
+I (25580) al_ghul: alive #5 | security=WPA3-SAE | uplink=yes | clone_clients=0 | heap=221368
+I (30580) al_ghul: alive #6 | security=WPA3-SAE | uplink=yes | clone_clients=0 | heap=221368
+
+[USER OBSERVATION, WPA3 case, 2026-11-04T20:26:08.2257493+00:00]
+  With the real S24 hotspot OFF, the ONLY Kaffi_FRI in range was the WPA3 twin.
+  The tablet did NOT auto-connect (clone_clients stayed 0 for 30s). When the user
+  tried to connect, the tablet REQUIRED the Wi-Fi password, i.e. the WPA3 twin
+  demanded re-authentication. Contrast: WPA2 / WPA2+PMF / transition all auto-joined
+  silently with no password. => WPA3 breaks the silent stored-credential capture.
+
+[DOWNGRADE TEST: phone profile WPA3, twin -> WPA2, at 2026-11-04T20:28:13.3519896+00:00]
+I (521) al_ghul: alive #0 | security=WPA2-PSK | uplink=no | clone_clients=0 | heap=251368
+W (350) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+W (480) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+AUTHMODE_OK WPA2-PSK
+I (500) al_ghul: alive #0 | security=WPA2-PSK | uplink=no | clone_clients=0 | heap=251364
+I (5500) al_ghul: alive #1 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228896
+I (10500) al_ghul: alive #2 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228896
+I (15500) al_ghul: alive #3 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228896
+I (20500) al_ghul: alive #4 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228896
+I (25500) al_ghul: alive #5 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228896
+I (30500) al_ghul: alive #6 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=228896
+
+[DOWNGRADE recheck at 2026-11-04T20:39:48.6564139+00:00]
+I (483) al_ghul: alive #0 | security=WPA2-PSK | uplink=no | clone_clients=0 | heap=251496
+I (530) al_ghul: alive #0 | security=WPA2-PSK | uplink=no | clone_clients=0 | heap=251368
+I (5310) al_ghul: a client joined the clone [security=WPA2-PSK]
+I (5530) al_ghul: alive #1 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=226464
+I (5530) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -64
+I (10530) al_ghul: alive #2 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=226352
+I (10530) al_ghul:   joined 0: 96:e4:c9:2b:f2:2e | rssi -60
+
+[CLEAN DOWNGRADE TEST - step 1: twin -> WPA3 to establish a verified WPA3 profile, at 2026-11-04T22:53:46.7221317+00:00]
+I (509) al_ghul: alive #0 | security=WPA2-PSK | uplink=no | clone_clients=0 | heap=251368
+W (350) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+W (470) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+AUTHMODE_OK WPA3-SAE
+I (580) al_ghul: alive #0 | security=WPA3-SAE | uplink=no | clone_clients=0 | heap=243664
+I (5580) al_ghul: alive #1 | security=WPA3-SAE | uplink=yes | clone_clients=0 | heap=221368
+
+[clean downgrade: twin TX lowered to 40 (stable), twin -> WPA3, at 2026-11-04T23:09:39.8472327+00:00]
+I (125530) al_ghul: alive #25 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=250252
+I (130530) al_ghul: alive #26 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=250472
+I (135530) al_ghul: alive #27 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=250472
+I (140530) al_ghul: alive #28 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=250472
+I (145530) al_ghul: alive #29 | security=WPA2-PSK | uplink=yes | clone_clients=0 | heap=250472
+W (146790) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+AUTHMODE_OK WPA3-SAE
+I (150530) al_ghul: alive #30 | security=WPA3-SAE | uplink=yes | clone_clients=0 | heap=243084
+I (155530) al_ghul: alive #31 | security=WPA3-SAE | uplink=yes | clone_clients=0 | heap=221332
+I (160530) al_ghul: alive #32 | security=WPA3-SAE | uplink=yes | clone_clients=0 | heap=221332
+
+[WPA3 twin, user re-entered password: who joined, at 2026-11-04T23:16:32.0130866+00:00]
+I (469) al_ghul: alive #0 | security=WPA2-PSK | uplink=no | clone_clients=0 | heap=251476
+I (470) al_ghul: alive #0 | security=WPA2-PSK | uplink=no | clone_clients=0 | heap=251468
+I (5470) al_ghul: alive #1 | security=WPA2-PSK | uplink=no | clone_clients=0 | heap=251408
+I (7260) al_ghul: a client joined the clone [security=WPA2-PSK]
+I (10470) al_ghul: alive #2 | security=WPA2-PSK | uplink=yes | clone_clients=1 | heap=224852
+I (10470) al_ghul:   joined 0: 9a:c3:2d:ae:a4:56 | rssi -43
+
+[KEY USER OBSERVATION, WPA3 profile confirmed, 2026-11-04T23:17:30.4108256+00:00]
+  Tablet's saved Kaffi_FRI verified as WPA3 (checked in Wi-Fi details).
+  Real S24 hotspot turned off. Both the tablet and the S23 still see Kaffi_FRI in
+  the air (the twin) and reconnect by re-entering the password. The password is the
+  same as the real AP, so it is accepted, the network shows the same name and the
+  same security type, and nothing looks wrong to the user: they believe they are on
+  the legitimate Wi-Fi because the password was correct. => The shared password
+  defeats WPA3's one-tap friction. A clean silent-downgrade measurement was blocked
+  by board power instability (repeated resets at high TX); noted as future work.
