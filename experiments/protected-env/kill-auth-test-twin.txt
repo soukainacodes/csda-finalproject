@@ -1,0 +1,3 @@
+# D3 unauthenticated takedown attempt (wrong kill token)
+KILL wrong-token-attempt  ->  KILL_ERR bad_token
+PING  ->  PONG
