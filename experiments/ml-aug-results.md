@@ -27,3 +27,17 @@ the model fall back on the physics it cannot fake (clock-skew, sequence numbers)
 The stealthy clone is SYNTHETIC (physically motivated: a twin can clone IEs; we even tried
 it, though the ESP32 vendor-IE broke the beacon). Small data; illustrative, not a benchmark.
 The synthetic case is a training aid and an adversarial test, never a real measured result.
+
+## Why the augmented number is 100% (and why to trust the DIRECTION, not the number)
+The 100% is inflated, not a perfect detector:
+1. The physical features are near-deterministic separators: a two-clock window has a
+   single-line TSF fit error ~1e10 us vs a few us for one clock, and two interleaved
+   sequence-number counters give a high discontinuity rate vs ~0 for one. Once the model
+   uses them, separation is almost perfect by physics, not by cleverness.
+2. In-distribution test: the synthetic stealthy clones used to TRAIN the augmented model
+   and those used to TEST it share the same construction recipe (mix the two real sources,
+   match the IE set). Source windows are disjoint, but the feature distribution is identical,
+   so acing the test is partly guaranteed by construction.
+3. Tiny test set (dozens of windows), so 100%/0% carries little statistical weight.
+Report the DIRECTION (plain model misses the stealthy clone; augmentation makes it fall back
+on the non-evadable clock/sequence signals), not the literal 100%.
