@@ -197,7 +197,6 @@ experiments/    ALL the raw logs + per-run verdicts + analysis scripts + result 
   protected-env/  the eFuse / flash-dump / kill-auth measurements
   round-logs/     the arms-race round logs (framework)
 docs/           ARCHITECTURE, HOW_IT_WORKS, BUILD_AND_FLASH, LAB_RUNBOOK, ETHICS, MCU_SECURITY, BUILD_LOG
-companion-server/  optional web viewer for the deck/dashboard (not required to reproduce anything)
 ```
 
 ---

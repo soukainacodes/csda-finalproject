@@ -192,24 +192,12 @@ def make_timeline_png(summary, out_png):
     return True
 
 
-def post_companion(base, key, payload):
-    """Push a live status to the audience companion (best-effort)."""
-    if not base:
-        return
-    try:
-        import requests
-        requests.post(base.rstrip("/") + "/event?key=" + key, json=payload, timeout=4)
-    except Exception:
-        pass
-
-
 def run(mode="synth", armed=False, own_image=None, url=None, token=None,
-        companion_url=None, companion_key=None, ctl="http", ctl_port=None,
+        ctl="http", ctl_port=None,
         max_windows=40, poll_gap=0.3):
     ts = time.strftime("%Y%m%d-%H%M%S")
     killcam = KillCam(config.ROUND_LOGS / f"killcam-{ts}.jsonl")
     print(f"\nTHE WATCHER IS HUNTING  (mode={mode}, {'ARMED' if armed else 'dry-run'})\n")
-    post_companion(companion_url, companion_key, {"down": False})  # reset the badge
 
     # 1) train a detector from one reference capture that contains both classes
     src = SynthSource() if mode == "synth" else SerialSource()
@@ -275,11 +263,6 @@ def run(mode="synth", armed=False, own_image=None, url=None, token=None,
     out_png = config.PLOTS / f"neutralize-{ts}.png"
     made = make_timeline_png(summary, out_png)
 
-    post_companion(companion_url, companion_key, {
-        "down": True, "detect": summary["detect_latency"],
-        "neutralize": summary["neutralize_latency"], "total": summary["total_latency"],
-        "target": hit_bssid})
-
     print("\n  === NEUTRALIZED ===")
     print(f"    twin online -> detected:   {summary['detect_latency']:.2f}s")
     print(f"    detected   -> neutralized: {summary['neutralize_latency']:.2f}s")
@@ -307,16 +290,12 @@ def main():
     ap.add_argument("--own-image", default=None, help="OTA payload to push before the kill")
     ap.add_argument("--url", default=None, help="override AL-GHUL control URL")
     ap.add_argument("--token", default=None, help="control token (runtime, keeps it out of files)")
-    ap.add_argument("--companion-url", default=None,
-                    help="push live TARGET DOWN + latency to the audience companion")
-    ap.add_argument("--companion-key", default=None, help="companion presenter key")
     ap.add_argument("--ctl", choices=["http", "serial"], default="http",
                     help="how to deliver the kill: http (WiFi) or serial (USB, reliable)")
     ap.add_argument("--ctl-port", default=None, help="AL-GHUL USB port for --ctl serial (e.g. COM12)")
     args = ap.parse_args()
     run(mode=args.mode, armed=args.arm, own_image=args.own_image,
         url=args.url, token=args.token,
-        companion_url=args.companion_url, companion_key=args.companion_key,
         ctl=args.ctl, ctl_port=args.ctl_port)
 
 

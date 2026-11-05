@@ -1,9 +1,0 @@
-{
-  "name": "alghul-companion",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Live presentation companion for AL-GHUL vs the Watcher",
-  "main": "server.js",
-  "scripts": { "start": "node server.js" },
-  "dependencies": { "ws": "^8.18.0" }
-}

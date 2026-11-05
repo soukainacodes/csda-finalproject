@@ -162,8 +162,6 @@ The response escalates through three visible, real stages:
    list of every MAC that joined the clone, which the twin logs to NVS as clients
    connect (metadata only, never payloads).
 
-During a live talk the whole sequence is mirrored onto the audience companion:
-`ALIVE` flips to `TARGET DOWN` with the latency numbers, pushed from the sentinel.
 The point of making it autonomous and measured: an AI that finds a rogue AP and
 ends it on its own is exactly why these devices must sit in protected environments.
 

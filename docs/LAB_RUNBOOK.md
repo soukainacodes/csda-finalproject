@@ -118,11 +118,10 @@ python -m src.sentinel --mode synth
 
 # LIVE and armed: real sniffer, real neutralisation over AL-GHUL's control plane.
 # Pushes the "owned" payload first (SoftAP -> NEUTRALIZED_BY_THE_WATCHER, red LED),
-# then the kill. Mirrors TARGET DOWN + the latency onto every audience phone.
+# then the kill.
 python -m src.sentinel --mode serial --arm `
   --own-image ..\firmware\pwned\build\pwned.bin `
-  --token ghoul-begone-2026 `
-  --companion-url https://ghoul.lausnanet.is --companion-key <PRESENTER_KEY>
+  --token ghoul-begone-2026
 ```
 
 What it writes each run (under `experiments/`):
