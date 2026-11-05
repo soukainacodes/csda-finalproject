@@ -1,0 +1,39 @@
+{
+  "captured_records": 1316,
+  "real_aps": 4,
+  "rmse_us": {
+    "min": 4.678810927760741,
+    "median": 4.971408325823026,
+    "max": 5.881044099106275
+  },
+  "flagged": 0,
+  "false_positive_rate": 0.0,
+  "multi_bssid_ssids": {},
+  "aps": [
+    {
+      "ssid": "genuine AP 1",
+      "beacons": 199,
+      "rmse_us": 5.9,
+      "flag": false
+    },
+    {
+      "ssid": "genuine AP 2",
+      "beacons": 211,
+      "rmse_us": 5.1,
+      "flag": false
+    },
+    {
+      "ssid": "genuine AP 3",
+      "beacons": 213,
+      "rmse_us": 4.8,
+      "flag": false
+    },
+    {
+      "ssid": "genuine AP 4",
+      "beacons": 213,
+      "rmse_us": 4.7,
+      "flag": false
+    }
+  ],
+  "note": "SSIDs/BSSIDs of third-party networks removed; only the detector outputs are kept."
+}

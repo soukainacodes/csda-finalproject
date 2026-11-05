@@ -26,3 +26,7 @@ Thumbs.db
 # raw captures, per-run summaries and demo transcripts live in experiments/ and are committed.
 # Only large binary flash dumps (*.bin) and the runtime portal flag stay out.
 gateway/*.flag
+
+# ambient FPR raw captures (third-party BSSIDs) kept local
+experiments/ambient-raw-*.jsonl
+experiments/ambient-fpr-summary-2*.json
