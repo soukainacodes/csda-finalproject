@@ -3,8 +3,9 @@
 // SCOPE REMINDER: this firmware runs ONLY on Soukaina's own ESP32-S3, cloning
 // HER OWN home router on HER OWN isolated lab network, with HER OWN phone as the
 // only client. No deauth, no jamming: the twin only broadcasts and relays. The
-// research purpose is to generate a controllable twin so the Watcher (the ML
-// detector on the laptop) can be trained and measured. See docs/ETHICS.md.
+// research purpose is to generate a controllable twin so the Watcher (the second
+// ESP32-S3: on-board detectors live, with the laptop logging and running the
+// offline ML) can be measured against it. See docs/ETHICS.md.
 //
 // Fill in your own router's details below before flashing. These are defaults;
 // they can also be overridden at runtime over the HTTP control interface and are

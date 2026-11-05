@@ -2,14 +2,17 @@
 
 This project is a self-contained, measured security experiment for the CSDA final
 project (T-742-CSDA, RU, Jacky Mallett). The research contribution is the
-**defender**: a machine-learning detector (the Watcher) and the measured
-attacker-vs-defender arms-race curve. The attacker (AL-GHUL) exists only to
-produce a controllable adversary to train and score the detector.
+**measured, on-board comparison of evil-twin detectors**: run live on the Watcher,
+they catch even a twin that clones the real BSSID exactly, using the physical
+device-independent tells an attacker cannot fake. The machine-learning detector and
+the attacker-vs-defender arms race are a framework and a reported limitation, not the
+headline. The attacker (AL-GHUL) exists only to produce a controllable adversary to
+test the detectors.
 
 ## Hard rules (enforced in design, not just stated)
 
-- **Own equipment only.** Everything runs on the student's own ESP32-S3, own
-  classic ESP32, own home router, own phone, and own laptop, on an isolated home
+- **Own equipment only.** Everything runs on the student's own two ESP32-S3 boards,
+  own home router, own phone, and own laptop, on an isolated home
   lab network. Never on production, never on work (Stokkseyri) WiFi, never on any
   network or device not owned by the student.
 - **Out-signal, never hide.** The twin only broadcasts a (louder) beacon and

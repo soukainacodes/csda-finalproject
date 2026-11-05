@@ -14,17 +14,17 @@ All CVEs below are real and dated. Sources are linked at the end.
 
 This is the class our **flash-dump + clone** demo sits in.
 
-- **CVE-2019-15894 — Secure Boot bypass via fault injection.** Physically
+- **CVE-2019-15894: Secure Boot bypass via fault injection.** Physically
   glitching the ESP32 CPU at boot can skip the Secure Boot digest check and run
   unverified code from flash. With flash encryption off, that is arbitrary code
   execution. Found by Riscure and independently by LimitedResults.
-- **CVE-2019-17391 — eFuse read-protection bypass.** Fault injection right after
+- **CVE-2019-17391: eFuse read-protection bypass.** Fault injection right after
   reset can corrupt the eFuse read-out and recover the **flash-encryption and
   secure-boot keys** stored in eFuse. Once you have the flash-encryption key, the
   entire flash (firmware + secrets) is readable. Later silicon (ESP32-D0WD-V3)
   added ROM checks that block this specific attack, newer research (Raelize,
   "Breaking the ESP32 V3") kept finding glitch paths.
-- **CVE-2025-27840 — 29 undocumented HCI commands (Tarlogic, March 2025).** The
+- **CVE-2025-27840: 29 undocumented HCI commands (Tarlogic, March 2025).** The
   ESP32 Bluetooth controller hides vendor commands including memory read/write
   (0xFC02), MAC spoofing and packet injection. Widely mis-reported as a
   "backdoor", then downgraded: it is **not remotely exploitable**, needs wired
@@ -41,14 +41,14 @@ unprotected ESP32 yields its firmware and every secret in it. Our plaintext
 This is the class our **credential-less crash** angle sits in: an attacker in
 radio range, with no password and no pairing, knocks the chip over.
 
-- **CVE-2019-12586 / CVE-2019-12588 — crafted 802.11 frames crash the WiFi stack.**
+- **CVE-2019-12586 / CVE-2019-12588: crafted 802.11 frames crash the WiFi stack.**
   The ESP32/ESP8266 802.11 MAC does not validate the RSN AuthKey-suite / cipher
   counts in beacons, probe responses and association responses; a crafted frame
   from radio range crashes the device. **This is the WiFi equivalent of our twin's
   weakness, and the most directly relevant: our twin is a WiFi AP.**
-- **CVE-2026-17054 — malformed control frame, ~62 KB buffer over-read** in the
+- **CVE-2026-17054: malformed control frame, ~62 KB buffer over-read** in the
   ESP-hosted WiFi driver (Zephyr), DoS by crashing the WiFi stack until reboot.
-- **SweynTooth (2020), CVE-2020-13594 / CVE-2020-13595** — on the BLE side: an
+- **SweynTooth (2020), CVE-2020-13594 / CVE-2020-13595**: on the BLE side: an
   invalid channel-map connection request crashes the ESP32 BLE controller, and an
   MIC-failure sequence silently disables its BLE stack via a reachable assertion.
   Attacker in radio range, no authentication. If the firmware does not auto-reboot,
@@ -62,7 +62,7 @@ defend itself; it relies entirely on its environment.
 
 The strongest evidence that "take over the chip remotely" is real, not theory.
 
-- **BrakTooth (2021), CVE-2021-28139 — remote code execution on the ESP32 over
+- **BrakTooth (2021), CVE-2021-28139: remote code execution on the ESP32 over
   Bluetooth, with no pairing.** The Bluetooth-Classic LMP implementation in
   ESP-IDF 4.4 and earlier mishandles a crafted LMP Feature Response Extended
   packet, allowing an attacker in radio range to execute arbitrary code. Part of a

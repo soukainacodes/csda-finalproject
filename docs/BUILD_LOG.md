@@ -4,6 +4,13 @@ Build workspace for the CSDA final project (T-742-CSDA, RU, Jacky Mallett).
 Student: Soukaina. This folder holds the actual code, data, and experiment logs.
 The written proposal, concepts, and slides live one level up in `Project/`.
 
+> Note (2026-11-05): this is a historical build log; the honest, current account is
+> the repository README. Two things changed since the early entries below. The Watcher
+> (the sniffer) was moved from the first classic ESP32 (COM8) to an ESP32-S3 (COM15),
+> and that S3 produced the reported results, so "classic ESP32 / COM8" below is early
+> history, not the final rig. And the on-board detectors, not the arms race, are the
+> project's result; the arms race is reported as a limitation.
+
 ## Safety scope (firm, unchanged)
 
 - Runs ONLY on my own isolated home lab: my own router, my own phone, my own
@@ -33,9 +40,11 @@ The written proposal, concepts, and slides live one level up in `Project/`.
 
 - H1 trust: phone auto-joins the louder twin, no human action.
 - H2 invisibility: transparent relay keeps working internet, nothing looks wrong.
-- H3 detectability: Watcher separates twin from real router, accuracy A, FPR F.
-- H4 arms race: as the twin adapts, accuracy moves along a curve; retraining
-  recovers it. This curve is the research result.
+- H3 detectability: the on-board detectors separate twin from real AP, including an
+  exact-BSSID clone that the naive count rule misses. This is the research result.
+- H4 arms race: whether, as the twin adapts, accuracy moves along a curve that
+  retraining recovers. On real hardware it did not evade, so this is a framework and
+  a limitation, not the result.
 
 ## Feasibility ladder
 
@@ -109,7 +118,7 @@ and your own router details, and are the only remaining manual steps.
 The installer's config step failed, so use the repo helper, not the Start-Menu
 shortcut:  `cd firmware; . .\activate-idf.ps1`  (then `idf.py ...`).
 
-## Sniffer bring-up (2026-10-01) — FLASHED + VERIFIED on hardware
+## Sniffer bring-up (2026-10-01): FLASHED + VERIFIED on hardware
 Flashed to the classic ESP32 (COM8) and confirmed capturing: 35 beacons / 4 APs
 in 12 s, full JSON records (ssid, bssid, ch, rssi, bi, cap, ordered IE list,
 vendor OUIs). Two fixes were needed and are baked into the firmware/config:

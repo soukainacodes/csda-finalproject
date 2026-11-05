@@ -95,9 +95,10 @@ failure modes: [`experiments/master-detector-comparison.md`](experiments/master-
 - **Caught live, on the board.** The detectors run on the second ESP32 (LED red on detect). Across A/B/C it
   detects the clone and does not false-alarm on a lone AP; **detection latency median 3 s (range 2–10 s, n=9)**.
   Confirmed under WPA2 and WPA2+PMF. See [`experiments/onboard-results-2026-11-05.md`](experiments/onboard-results-2026-11-05.md).
-- **The un-evadable core is device-independent:** two clocks under one BSSID (clock-skew / TSF-jump), double
-  beacon rate, a second sequence counter. The IE and per-radio-skew tells are **flattered** by this attacker
-  being a bare ESP32 against a rich Windows hotspot, stated plainly, not hidden.
+- **The un-evadable core is device-independent:** two clocks under one BSSID (TSF-jump on the board,
+  clock-skew fit offline), double beacon rate, a second sequence counter (both measured offline, co-channel).
+  The IE and per-radio-skew tells are **flattered** by this attacker being a bare ESP32 against a rich
+  Windows hotspot, stated plainly, not hidden.
 
 ### The machine-learning detector, honestly scoped
 A RandomForest trained on the **real** captures (no synthetic data, no BSSID/MAC as a feature) separates twin
@@ -185,8 +186,9 @@ python -c "print(open('dump.bin','rb').read().count(b'YOUR_PSK'))"
 firmware/
   al_ghul/      the twin (ESP32-S3): clone + out-signal + NAT relay + disguise + control + /kill
                 app_config.h  <- SET YOUR OWN SSID / PSK / control token here
-  sniffer/      the Watcher (ESP32): promiscuous capture + on-board detectors (rule-1, IE, TSF) -> LED + JSON
+  sniffer/      the Watcher (ESP32-S3): promiscuous capture + on-board detectors (rule-1, IE, TSF) -> LED + JSON
   kill/         the OTA kill image
+  pwned/        the optional "owned" takeover banner image (lab-only demo)
 gateway/        educational lab demos: captive portal, DNS helper, session-hijack demo, metadata harvest
 watcher/
   src/          capture, features, RandomForest detector, metrics, evolutionary attacker, arms-race loop

@@ -1,5 +1,9 @@
 # Detector comparison, measured results (2026-11-05, own lab, 2.4 GHz)
 
+> Note: the canonical detector comparison referenced by the README and the report is
+> [`master-detector-comparison.md`](master-detector-comparison.md). This file is a
+> companion with the same runs, organised results only.
+
 Organised results only, no narrative.
 
 Ground truth: the AL-GHUL twin, reconfigured over serial.

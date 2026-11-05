@@ -1,7 +1,10 @@
 # The Watcher
 
-The defender half of the project: an ML detector that learns to tell the real
-router from the twin, plus the arms-race orchestrator and the kill-switch.
+The laptop half of the project. The PRIMARY detector is on the board, in
+`firmware/sniffer` (`detector.c`): rule-1, the IE fingerprint, and the TSF clock
+check run live on the Watcher ESP32-S3. This Python folder is the offline leg: it
+logs the captures, runs the offline detectors and the ML classifier, drives the
+arms-race framework, and pushes the kill.
 
 ## Setup
 

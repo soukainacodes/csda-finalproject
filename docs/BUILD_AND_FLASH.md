@@ -34,23 +34,23 @@ idf.py -p COM11 flash monitor
 If flashing cannot connect ("No serial data received"): hold **BOOT**, tap
 **RST**, release **BOOT**, then re-run. Exit the monitor with `Ctrl+]`.
 
-## 4. Build + flash the sniffer (classic ESP32)
+## 4. Build + flash the Watcher (ESP32-S3)
 
-This project's default target must be set to **esp32** (it is a different chip).
-Plug in the classic ESP32 (shows as COM8).
+The Watcher is the second ESP32-S3 (same chip as the twin); its target is
+**esp32s3**. Plug in the Watcher S3 (shows as COM15; the twin is COM18).
 
 ```powershell
 cd C:\Users\souka\AL-GHUL\firmware\sniffer
-idf.py set-target esp32
+idf.py set-target esp32s3
 idf.py build
-idf.py -p COM8 flash monitor
+idf.py -p COM15 flash monitor
 ```
 
 You should see one JSON line per beacon. By default it hops channels 1..13; to
 lock to your router's channel, build with
 `idf.py -DSNIFFER_LOCK_CHANNEL=<ch> build` or set it in `sdkconfig`.
 
-## 5. Build the kill image (ESP32-S3) — do NOT flash it
+## 5. Build the kill image (ESP32-S3): do NOT flash it
 
 The kill image is delivered to AL-GHUL over OTA, not flashed over USB.
 
@@ -64,5 +64,6 @@ idf.py build
 ## Notes
 
 - All build output stays under `C:\Users\souka\AL-GHUL` (off Google Drive).
-- The S3 console is on native USB-Serial/JTAG; the classic ESP32 console is on
-  UART0 via its CP2102 (COM8).
+- Both boards are ESP32-S3 with the console on native USB-Serial/JTAG (twin COM18,
+  Watcher COM15). Open these ports with dtr=False, rts=False so a connect does not
+  reset the board.

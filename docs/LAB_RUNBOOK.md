@@ -60,7 +60,7 @@ python -m src.takeover --level own --image ..\firmware\al_ghul\build\al_ghul.bin
 python -m src.takeover --level kill --yes
 ```
 
-Level `own` is the headline "remote takeover": the board ends up running an image
+Level `own` is an optional lab-only "remote takeover" demo: the board ends up running an image
 the operator pushed. Level `kill` is the clean finish (same effect as the older
 `python -m src.killswitch --image ..\firmware\kill\build\kill.bin --yes`, which
 still works and now sends the token too). After a kill, only a physical USB
@@ -105,7 +105,7 @@ Finding both the WiFi password and the kill token in cleartext is the proof that
 "authenticated" is only as strong as the chip's (default-off) secret storage.
 Mitigation: enable flash encryption + secure boot (docs/MCU_SECURITY.md).
 
-## E. The autonomous kill (the showstopper)
+## E. The autonomous kill (optional lab-only demo)
 
 The Watcher does not wait for a human. `src.sentinel` watches the air, and the
 moment it is confident a twin is present it runs the takeover/kill chain by
@@ -155,19 +155,21 @@ connect, metadata only, never payloads). Report lands at
 
 ## What to collect for the report (the 50%)
 
-- The arms-race curve PNG (the H4 result).
-- The per-round CSV/JSON (accuracy, precision, recall, FPR per round).
+The result, collect these first:
+- The on-board detector comparison across A/B/C (`experiments/master-detector-comparison.md`
+  + `experiments/onboard-results-2026-11-05.md`): which detector catches the exact-BSSID
+  clone, and the detection-latency distribution (median 3 s, range 2 to 10 s, n=9). This is H3.
+- The security-mode matrix (`experiments/security-mode-matrix.md`): which modes still allow
+  the silent capture (WPA2 / PMF / transition yes, WPA3 forces a prompt). This is H5.
+- The protected-environment measurements (`experiments/protected-env/`): the eFuse states and
+  the flash dump recovering the plaintext secrets, tied to the real CVEs/incidents in
+  docs/MCU_SECURITY.md. This is the MCU-weakness evidence.
 - Notes/screenshots for H1 (phone auto-join) and H2 (working internet).
-- A short account of which disguise knobs the attacker evolved and which residual
-  feature let the Watcher recover (expected: beacon-timing jitter floor).
-- The takeover demo transcript (`src.takeover` output for reach/prove/own/kill) as
-  evidence of remote control and OTA takeover.
-- The flash dump + the recovered plaintext secrets (section D) as the MCU-weakness
-  evidence, tied to the real CVEs/incidents in docs/MCU_SECURITY.md.
+
+Framework and optional lab-only demos (report as such, not as the result):
+- The arms-race curve PNG + per-round CSV/JSON as the H4 framework; on real hardware it did
+  not evade, so report it as a limitation.
+- The takeover transcript (`src.takeover`), the autonomous-kill latency JSON + kill-cam
+  (`src.sentinel`), the forensics report, and a photo of the "owned" payload: optional
+  lab-only demos that work only because the board is owned and unprotected.
 - If attempted, the credential-less crash serial log (reboot vs deadlock).
-- The autonomous-kill latency figure + JSON (time-to-detect, time-to-neutralise)
-  from `src.sentinel`, and the kill-cam JSONL.
-- The forensics report (`experiments/forensics-report.md`): recovered secrets +
-  the victim diary, as the payoff of the flash-encryption-off weakness.
-- A photo/screen-grab of the board running the "owned" payload
-  (`NEUTRALIZED_BY_THE_WATCHER`, red LED) and of `AL-GHUL_DOWN` on the sniffer.

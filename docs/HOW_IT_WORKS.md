@@ -22,11 +22,16 @@ the victim's traffic out through its own uplink, so the internet keeps working.
 It never deauthenticates or jams anything, and it never inspects payloads. Its
 disguise (BSSID, beacon interval, vendor IE, TX power) can be changed live.
 
-## 3. The Watcher (detection) — how H3 works
+## 3. The Watcher (detection): how H3 works
 
-A second ESP32 in **promiscuous mode** copies every beacon/probe off the air and
-streams one JSON record per frame to the laptop. The Watcher turns those into
-features and classifies each as **real** or **twin**.
+The Watcher is the second ESP32-S3. In **promiscuous mode** it copies every
+beacon/probe off the air and, on the board itself, runs the primary detectors live:
+rule-1 (how many BSSIDs advertise one SSID), an information-element fingerprint, and a
+TSF clock check, lighting its LED on detection. These device-independent tells catch
+even a twin that clones the real BSSID exactly, which the count rule alone misses. The
+board also streams one JSON record per frame to the laptop, where further detectors run
+offline (clock-skew fit, sequence-number, beacon-rate) alongside a RandomForest that
+turns those records into features and classifies each frame as **real** or **twin**.
 
 **Key design rule:** we *label* frames by BSSID (real AP vs anything else on the
 same SSID), so we must **never use the BSSID as a feature**, that would be
@@ -50,7 +55,7 @@ into the generator); see [`experiments/ml-watcher-limitations.md`](../experiment
 Code: `watcher/src/features.py` (features), `watcher/src/train.py` (classifier),
 `watcher/src/evaluate.py` (metrics).
 
-## 4. The arms race — how H4 and the fighting graph work
+## 4. The arms race: how H4 and the fighting graph work
 
 The attacker is an **evolutionary search** (`watcher/src/attacker.py`): each round
 it tries a few random tweaks to its disguise, reads how well the current detector
@@ -100,6 +105,11 @@ failures in the wild (OWASP IoT #1; Mirai) and routine MCU flash extraction.
 *(The values in `app_config.h` are **lab throwaways**; replace them with your own before you run this, and do not reuse them anywhere real.)*
 
 ## 5.5 From kill to takeover, and why it matters
+
+> This section and 5.6 are an optional, lab-only demonstration. They are not the
+> project's result (which is the on-board detection in section 3) and they work only
+> because the board is owned and ships with every hardware protection off. Reported
+> as a demo, not a headline.
 
 Wiping the board is the *polite* use of its weakness. The same defaults-off state
 means a compromised ESP32 can be **taken over**, not just switched off:

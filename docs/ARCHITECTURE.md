@@ -2,28 +2,34 @@
 
 ```
                  2.4 GHz beacons
-  [ Real router ] ----------------\
-       ^  (uplink STA)             \         USB serial (JSON records)
-       |                            v       +--------------------------+
-  [ AL-GHUL  ESP32-S3 ]  <~~beacons~~>  [ Sniffer ESP32 ] ---------> [ Laptop: Watcher ]
-   - clones SSID, out-signals        (promiscuous, RX only)          - features + ML
-   - STA uplink + NAT relay (MITM)                                    - metrics (acc/FPR)
-   - disguise: bssid/beacon/IE/power                                  - arms-race loop
-   - HTTP control + OTA receive  <----- HTTP /disguise, /status, /ota ---- attacker AI
-                                  <----- OTA kill image (finisher) ------- kill-switch
-       ^
-       | 2.4 GHz (same SSID+PSK: it is her own network)
+  [ Real AP ] -------------------\
+  (phone hotspot)                 \        USB serial (JSON captures)
+       ^  (uplink STA)             v       +---------------------------+
+  [ AL-GHUL  ESP32-S3 ] <~beacons~> [ the Watcher  ESP32-S3 ] ----> [ Laptop ]
+   - clones SSID, out-signals        - promiscuous sniff             - logging
+   - STA uplink + NAT relay (MITM)   - on-board detectors +          - offline detectors
+   - disguise: bssid/beacon/IE/power   LED: rule-1 / IE-fp / TSF       (clock-skew, seq,
+   - HTTP control + OTA receive                                        beacon-rate) + ML
+         ^                        <-- HTTP /disguise,/status,/ota ----- control + kill push
+         |                        <-- OTA kill image (optional demo) --
+       2.4 GHz (same SSID+PSK: it is her own network)
   [ Her phone ] auto-joins the louder twin, keeps working internet
 ```
+
+There are exactly two ESP32-S3 boards: the twin (AL-GHUL) and the Watcher. The
+Watcher does both the promiscuous sniffing and the live on-board detection; the
+laptop is only the logger and the offline/ML leg. The "sniffer" is the Watcher's
+role, not a separate device.
 
 ## Components
 
 | Path | Board / host | Role |
 |---|---|---|
 | `firmware/al_ghul/` | ESP32-S3 (16MB) | the twin: clone + out-signal + NAT relay + control + OTA |
-| `firmware/sniffer/` | classic ESP32 (4MB) | promiscuous beacon/probe capture, JSON over USB |
-| `firmware/kill/`    | ESP32-S3 (OTA image) | wipes the twin's flash; the finisher |
-| `watcher/src/`      | laptop (Python) | capture, features, classifier, arms race, plots, kill push |
+| `firmware/sniffer/` | ESP32-S3 | the Watcher: promiscuous sniff + on-board detectors (rule-1 / IE-fingerprint / TSF) + LED, streams JSON to the laptop |
+| `firmware/kill/`    | ESP32-S3 (OTA image) | wipes the twin's flash; the finisher (optional lab-only demo) |
+| `firmware/pwned/`   | ESP32-S3 (OTA image) | the "owned" takeover banner image (optional lab-only demo) |
+| `watcher/src/`      | laptop (Python) | logging, offline detectors + classifier, arms-race framework, plots, kill push |
 
 ## Disguise knobs (the attacker's genome)
 
@@ -55,5 +61,8 @@ the kill image lands in the inactive slot and boots from there.
 - **H1 trust** (phone auto-joins louder twin): clone SSID+PSK + max tx power +
   placement. Measured by observing the phone's association.
 - **H2 invisibility** (internet still works): the NAT relay (`napt_relay.c`).
-- **H3 detectability** (accuracy A, FPR F): Watcher `train.py` + `evaluate.py`.
-- **H4 arms race** (curve over rounds): `armsrace.py` + `plot_curve.py`.
+- **H3 detectability** (catches the exact-BSSID clone): the on-board detectors in
+  `firmware/sniffer/main/detector.c` (live, the primary defender), plus the offline
+  detectors and classifier (`train.py` + `evaluate.py`). This is the project's result.
+- **H4 arms race** (framework, demoted to a limitation): `armsrace.py` + `plot_curve.py`;
+  on real hardware the attacker never evaded, so it is reported as a limitation, not a result.
