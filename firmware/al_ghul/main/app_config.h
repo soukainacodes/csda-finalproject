@@ -41,6 +41,15 @@
 // A/E, last bit of first byte = 0). The arms-race attacker will mutate this.
 #define ALGHUL_DEFAULT_AP_BSSID   { 0x02, 0xA1, 0x00, 0x00, 0x00, 0x01 }
 
+// ---- Measurement mode (detector study) -------------------------------------
+// A real evil twin sits on the victim's channel and beacons continuously. In
+// this lab the twin's uplink is dead, so its STA hops while scanning and the AP
+// beacon is sparse, which starves the channel-dependent detectors. Set to 1 to
+// run AP-only, pinned to ALGHUL_MEASURE_CHANNEL, so the twin beacons steadily
+// co-channel with the real AP (relay/uplink is irrelevant to the defence study).
+#define ALGHUL_MEASURE_STABLE     0
+#define ALGHUL_MEASURE_CHANNEL    6
+
 // Beacon interval in TU (1 TU = 1.024 ms). 100 is the common default; the
 // attacker varies it as a timing-fingerprint knob.
 #define ALGHUL_DEFAULT_BEACON_TU  100

