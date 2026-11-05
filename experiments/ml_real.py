@@ -112,7 +112,7 @@ def rows_for(path, labelmap=None, cap_tag=""):
 # ---- build real labelled table ----
 rows = []
 for p, lm in CAPS.items():
-    rows += rows_for(HERE / p, lm, p[16:28])
+    rows += rows_for(HERE / p, lm, p[:-6])   # tag by full capture name so the 3 A sessions split independently
 df = pd.DataFrame(rows)
 
 # ---- temporal split per capture (first 60% train, last 40% test) ----
@@ -145,8 +145,8 @@ acc_n = accuracy_score(bdf["label"], noie.predict(bdf[NOIE]))
 print("=" * 66)
 print("CROSS-SCENARIO  train on real A+C, predict the exact clone B (IE ground-truth)")
 print(f"  B beacons={len(bdf)}  twin={int(sum(bdf['label']))}  real={len(bdf)-int(sum(bdf['label']))}")
-print(f"  full-feature model accuracy on B      = {acc_f:.3f}")
-print(f"  clock/timing-only model accuracy on B = {acc_n:.3f}")
+print(f"  clock/timing-only model accuracy on B = {acc_n:.3f}   <- HEADLINE: no IE, independent of the IE-based labels")
+print(f"  full-feature model accuracy on B      = {acc_f:.3f}   (sanity check only: uses IE, and B's labels are IE-derived, so partly tautological)")
 print("=" * 66)
 
 # ---- save a feature-importance figure ----

