@@ -42,6 +42,25 @@ static void handle_line(char *line)
         } else {
             printf("KILL_ERR bad_token\n");
         }
+    } else if (strncmp(line, "AUTHMODE ", 9) == 0) {
+        // Security-mode experiment: re-advertise the clone under a chosen mode,
+        // so we can measure which modes a victim still joins.
+        // "AUTHMODE OPEN|WPA2|WPA2-PMF|WPA3|WPA2WPA3"
+        const char *m = line + 9;
+        wifi_auth_mode_t mode = WIFI_AUTH_WPA2_PSK;
+        bool pmf = false, ok = true;
+        if      (strcmp(m, "OPEN") == 0)       mode = WIFI_AUTH_OPEN;
+        else if (strcmp(m, "WPA2") == 0)       mode = WIFI_AUTH_WPA2_PSK;
+        else if (strcmp(m, "WPA2-PMF") == 0) { mode = WIFI_AUTH_WPA2_PSK; pmf = true; }
+        else if (strcmp(m, "WPA3") == 0)       mode = WIFI_AUTH_WPA3_PSK;
+        else if (strcmp(m, "WPA2WPA3") == 0)   mode = WIFI_AUTH_WPA2_WPA3_PSK;
+        else ok = false;
+        if (ok) {
+            wifi_twin_set_authmode(mode, pmf);
+            printf("AUTHMODE_OK %s\n", wifi_twin_authmode_name());
+        } else {
+            printf("AUTHMODE_ERR use OPEN|WPA2|WPA2-PMF|WPA3|WPA2WPA3\n");
+        }
     }
 }
 

@@ -22,6 +22,7 @@
 #include "esp_wifi.h"
 #include "nvs_flash.h"
 #include "nvs.h"
+#include "led_strip.h"
 
 #include "app_config.h"
 #include "disguise.h"
@@ -61,6 +62,40 @@ static void relaylog_record(const uint8_t *mac)
     nvs_close(h);
 }
 
+// ---- Status LED -------------------------------------------------------------
+// GREEN = the clone is empty (no device joined). RED = at least one device is on
+// the clone right now. A glanceable "someone took the bait" indicator for the
+// live demo. Driven both by the join/leave events (instant) and by the heartbeat
+// (self-correcting, in case an event is ever missed). If the board has no
+// addressable LED the status light is simply skipped, nothing else changes.
+static led_strip_handle_t s_led;
+
+static void led_init(void)
+{
+    led_strip_config_t sc = { .strip_gpio_num = ALGHUL_LED_GPIO, .max_leds = 1 };
+    led_strip_rmt_config_t rc = { .resolution_hz = 10 * 1000 * 1000 };
+    if (led_strip_new_rmt_device(&sc, &rc, &s_led) != ESP_OK) {
+        s_led = NULL;
+        ESP_LOGW(TAG, "no addressable LED on GPIO %d; status light disabled", ALGHUL_LED_GPIO);
+    }
+}
+
+static int ap_client_count(void)
+{
+    wifi_sta_list_t c;
+    memset(&c, 0, sizeof(c));
+    esp_wifi_ap_get_sta_list(&c);
+    return c.num;
+}
+
+static void led_show_clients(int n)
+{
+    if (!s_led) return;
+    if (n > 0) led_strip_set_pixel(s_led, 0, 50, 0, 0);  // red: a device is on the clone
+    else       led_strip_set_pixel(s_led, 0, 0, 50, 0);  // green: clone is empty
+    led_strip_refresh(s_led);
+}
+
 static void on_wifi(void *arg, esp_event_base_t base, int32_t id, void *data)
 {
     switch (id) {
@@ -74,11 +109,13 @@ static void on_wifi(void *arg, esp_event_base_t base, int32_t id, void *data)
     case WIFI_EVENT_AP_STACONNECTED: {
         wifi_event_ap_staconnected_t *e = (wifi_event_ap_staconnected_t *)data;
         relaylog_record(e->mac);
-        ESP_LOGI(TAG, "a client joined the clone");
+        ESP_LOGI(TAG, "a client joined the clone [security=%s]", wifi_twin_authmode_name());
+        led_show_clients(ap_client_count());  // -> RED
         break;
     }
     case WIFI_EVENT_AP_STADISCONNECTED:
         ESP_LOGI(TAG, "a client left the clone");
+        led_show_clients(ap_client_count());  // -> GREEN once the last one leaves
         break;
     default:
         break;
@@ -133,6 +170,10 @@ void app_main(void)
     ESP_ERROR_CHECK(control_server_start());
     serial_control_start();  // USB control: reliable even when WiFi flaps
 
+    // Status LED starts GREEN (clone empty); it flips RED the moment a device joins.
+    led_init();
+    led_show_clients(0);
+
     // Heartbeat: show uplink status AND the devices currently joined to the clone
     // (so you can watch the victim roam onto the twin, the H1 check).
     int beat = 0;
@@ -142,8 +183,8 @@ void app_main(void)
         wifi_sta_list_t clients;
         memset(&clients, 0, sizeof(clients));
         esp_wifi_ap_get_sta_list(&clients);
-        ESP_LOGI(TAG, "alive #%d | uplink=%s | clone_clients=%d | heap=%u",
-                 beat++, up ? "yes" : "no", clients.num,
+        ESP_LOGI(TAG, "alive #%d | security=%s | uplink=%s | clone_clients=%d | heap=%u",
+                 beat++, wifi_twin_authmode_name(), up ? "yes" : "no", clients.num,
                  (unsigned)esp_get_free_heap_size());
         for (int i = 0; i < clients.num; i++) {
             ESP_LOGI(TAG, "  joined %d: %02x:%02x:%02x:%02x:%02x:%02x | rssi %d",
@@ -151,6 +192,7 @@ void app_main(void)
                      clients.sta[i].mac[2], clients.sta[i].mac[3],
                      clients.sta[i].mac[4], clients.sta[i].mac[5], clients.sta[i].rssi);
         }
+        led_show_clients(clients.num);  // keep the LED in sync with reality
         vTaskDelay(pdMS_TO_TICKS(5000));
     }
 }

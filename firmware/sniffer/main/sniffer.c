@@ -16,6 +16,7 @@
 #include "nvs_flash.h"
 
 #include "beacon_parse.h"
+#include "detector.h"
 
 static const char *TAG = "sniffer";
 
@@ -86,6 +87,18 @@ static void channel_task(void *arg)
 #endif
 }
 
+// The Watcher's decision loop: bring up the status LED, then every second expire
+// stale BSSIDs, evaluate "two BSSIDs for the target SSID = evil twin", drive the
+// LED (green clear / red detected) and log a JSON line on each state change.
+static void detector_task(void *arg)
+{
+    detector_init();
+    while (1) {
+        detector_tick(esp_timer_get_time());
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
+}
+
 void app_main(void)
 {
     esp_err_t err = nvs_flash_init();
@@ -114,6 +127,7 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_wifi_set_promiscuous(true));
 
     xTaskCreate(channel_task, "channel", 2048, NULL, 4, NULL);
+    xTaskCreate(detector_task, "detector", 4096, NULL, 4, NULL);
 
     // Banner line the laptop capture script watches for.
     printf("{\"k\":\"sniffer_ready\",\"lock_channel\":%d}\n", SNIFFER_LOCK_CHANNEL);

@@ -21,3 +21,9 @@ experiments/*.bin
 Thumbs.db
 .DS_Store
 *.swp
+
+# ---- Measurement captures + demo logs (evidence; backed up to Drive Project/Task3-Detection, not versioned) ----
+experiments/*.jsonl
+experiments/*.json
+experiments/session-hijack-demo-*.log
+gateway/*.flag

